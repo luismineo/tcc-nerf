@@ -1,0 +1,36 @@
+diff --git a/src/python_api.cu b/src/python_api.cu
+index 8f11fe1..23c9fd9 100644
+--- a/src/python_api.cu
++++ b/src/python_api.cu
+@@ -668,6 +668,10 @@ PYBIND11_MODULE(pyngp, m) {
+ 		.def_readwrite("visualized_layer", &Testbed::m_visualized_layer)
+ 		.def_property_readonly("loss", [](py::object& obj) { return obj.cast<Testbed&>().m_loss_scalar.val(); })
+ 		.def_readonly("training_step", &Testbed::m_training_step)
++		// Semente mestra (m_seed): governa a inicializacao dos pesos, o RNG de amostragem de raios e o
++		// grid de densidade. Precisa ser atribuida ANTES de reload_network_from_file()/reset(), que sao
++		// os pontos onde m_rng e o Trainer a consomem. Exposta para o grid search do TCC.
++		.def_readwrite("seed", &Testbed::m_seed)
+ 		.def_readonly("nerf", &Testbed::m_nerf)
+ 		.def_readonly("sdf", &Testbed::m_sdf)
+ 		.def_readonly("image", &Testbed::m_image)
+@@ -785,6 +789,20 @@ PYBIND11_MODULE(pyngp, m) {
+ 		.def_readwrite("loss_type", &Testbed::Nerf::Training::loss_type)
+ 		.def_readwrite("depth_loss_type", &Testbed::Nerf::Training::depth_loss_type)
+ 		.def_readwrite("snap_to_pixel_centers", &Testbed::Nerf::Training::snap_to_pixel_centers)
++		// Contadores do controlador adaptativo de batch (Testbed::NerfCounters).
++		// Somente leitura: rays_per_batch e recalculado ao fim de cada passo em
++		// update_after_training(), a partir de target_batch_size (= testbed
++		// .training_batch_size) e de measured_batch_size. Expostos para o grid
++		// search do TCC registrar quantos raios cada cena precisa para preencher
++		// um orcamento fixo de amostras — um proxy de ocupacao da cena.
++		.def_property_readonly(
++			"n_rays_per_batch",
++			[](const Testbed::Nerf::Training& t) { return t.counters_rgb.rays_per_batch; }
++		)
++		.def_property_readonly(
++			"measured_batch_size",
++			[](const Testbed::Nerf::Training& t) { return t.counters_rgb.measured_batch_size; }
++		)
+ 		.def_readwrite("optimize_extrinsics", &Testbed::Nerf::Training::optimize_extrinsics)
+ 		.def_readwrite("optimize_per_image_latents", &Testbed::Nerf::Training::optimize_extra_dims)
+ 		.def_readwrite("optimize_extra_dims", &Testbed::Nerf::Training::optimize_extra_dims)

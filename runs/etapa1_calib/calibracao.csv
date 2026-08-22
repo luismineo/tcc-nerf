@@ -1,0 +1,9 @@
+scene,factor,resolucao,n_train_images,status,vram_peak_mb,vram_baseline_mb,vram_peak_device_mb,vram_at_failure_mb,vram_method,n_params,n_encoding_params,steps_per_s,t_setup_s,t_total_s,error
+garden,8,648x420,185,ok,3477.6,438.6,3916.2,,device_minus_baseline,48801344,48784960,14.53,0.529,70.6,
+garden,4,1297x840,185,ok,4952.6,447.6,5400.2,,device_minus_baseline,48801344,48784960,14.76,0.91,71.1,
+garden,2,2594x1681,185,oom,4462.6,447.6,4910.2,5918.2,device_minus_baseline,48801344,48784960,,2.178,2.8,"RuntimeError: /home/luis/instant-ngp/dependencies/tiny-cuda-nn/include/tiny-cuda-nn/gpu_memory.h:571 cuMemSetAccess(m_base_address + m_size, n_bytes_to_allocate, &access_desc, 1) failed: CUDA_ERROR_OUT_OF_MEMORY"
+garden,1,,,pulado,,,,,,,,,,,f2 ja estourou a VRAM
+bonsai,8,390x260,292,ok,2958.6,447.6,3406.2,,device_minus_baseline,48801344,48784960,14.07,0.334,72.4,
+bonsai,4,780x520,292,ok,3906.6,447.6,4354.2,,device_minus_baseline,48801344,48784960,13.88,0.707,74.9,
+bonsai,2,1559x1039,292,ok,5604.6,447.6,6052.2,,device_minus_baseline,48801344,48784960,14.07,1.518,79.2,
+bonsai,1,3118x2078,292,oom,5546.6,447.6,5994.2,5921.7,device_minus_baseline,48801344,48784960,0.29,34.004,3507.9,"RuntimeError: Could not allocate memory: /home/luis/instant-ngp/dependencies/tiny-cuda-nn/include/tiny-cuda-nn/gpu_memory.h:125 cudaMalloc((void**)&rawptr, n_bytes+DEBUG_GUARD_SIZE*2) failed: out of memory"

@@ -1,0 +1,25 @@
+{
+  "csv": "runs/exp01/results.csv",
+  "n_rows": 59,
+  "n_unique_runs": 59,
+  "n_usable": 59,
+  "scenes": [
+    "chair",
+    "lego"
+  ],
+  "front_sizes": {
+    "chair": 23,
+    "lego": 22
+  },
+  "psnr_tolerance_db": -2.0,
+  "n_within_tolerance": 42,
+  "n_lpips_psnr_disagreements": 3,
+  "figures": [
+    "pareto_psnr_vram.png",
+    "pareto_psnr_vram.pdf",
+    "pareto_psnr_tempo.png",
+    "pareto_psnr_tempo.pdf",
+    "degradacao_baseline.png",
+    "degradacao_baseline.pdf"
+  ]
+}

@@ -1,0 +1,299 @@
+{
+  "status": "oom",
+  "error": "RuntimeError: Could not allocate memory: /home/luis/instant-ngp/dependencies/tiny-cuda-nn/include/tiny-cuda-nn/gpu_memory.h:125 cudaMalloc((void**)&rawptr, n_bytes+DEBUG_GUARD_SIZE*2) failed: out of memory",
+  "run_tag": "bonsai_f1",
+  "scene": "/home/luis/tcc-nerf/data/mip_nerf/bonsai/transforms.json",
+  "network": "/home/luis/tcc-nerf/runs/etapa1_calib/network_T19_F8_L16.json",
+  "n_steps": 1000,
+  "batch_size": 262144,
+  "seed": 0,
+  "test_stride": 64,
+  "spp": 1,
+  "pid": 11388,
+  "timestamp": "2026-08-21T23:09:50",
+  "vram_baseline_mb": 447.6,
+  "nvml_error": null,
+  "seed_supported": true,
+  "n_train_images": 292,
+  "n_params": 48801344,
+  "n_encoding_params": 48784960,
+  "nerf_compatibility": false,
+  "batch_size_effective_before": 262144,
+  "t_setup_s": 34.004,
+  "counters_available": true,
+  "t_train_s": 3436.215,
+  "steps_per_s": 0.29,
+  "training_step_final": 1000,
+  "loss_history": [
+    [
+      1,
+      0.04600782319903374
+    ],
+    [
+      17,
+      0.018464336171746254
+    ],
+    [
+      33,
+      0.018927397206425667
+    ],
+    [
+      49,
+      0.016203634440898895
+    ],
+    [
+      65,
+      0.013172573409974575
+    ],
+    [
+      81,
+      0.01083431113511324
+    ],
+    [
+      97,
+      0.009521189145743847
+    ],
+    [
+      113,
+      0.00859950203448534
+    ],
+    [
+      129,
+      0.008250487968325615
+    ],
+    [
+      145,
+      0.007806664332747459
+    ],
+    [
+      161,
+      0.006464966107159853
+    ],
+    [
+      177,
+      0.0066476790234446526
+    ],
+    [
+      193,
+      0.006141482852399349
+    ],
+    [
+      209,
+      0.005614871624857187
+    ],
+    [
+      225,
+      0.006022984627634287
+    ],
+    [
+      241,
+      0.0054694474674761295
+    ],
+    [
+      257,
+      0.0051803565584123135
+    ],
+    [
+      273,
+      0.00523678632453084
+    ],
+    [
+      289,
+      0.004930640570819378
+    ],
+    [
+      305,
+      0.00505666621029377
+    ],
+    [
+      321,
+      0.004509167280048132
+    ],
+    [
+      337,
+      0.0047295973636209965
+    ],
+    [
+      353,
+      0.004583454690873623
+    ],
+    [
+      369,
+      0.004128176253288984
+    ],
+    [
+      385,
+      0.004323357716202736
+    ],
+    [
+      401,
+      0.0042634629644453526
+    ],
+    [
+      417,
+      0.004262642003595829
+    ],
+    [
+      433,
+      0.004018601030111313
+    ],
+    [
+      449,
+      0.003981554880738258
+    ],
+    [
+      465,
+      0.004086378496140242
+    ],
+    [
+      481,
+      0.004082098137587309
+    ],
+    [
+      497,
+      0.00398684898391366
+    ],
+    [
+      513,
+      0.0037726720329374075
+    ],
+    [
+      529,
+      0.003889423096552491
+    ],
+    [
+      545,
+      0.003754956182092428
+    ],
+    [
+      561,
+      0.0038315674755722284
+    ],
+    [
+      577,
+      0.0035301982425153255
+    ],
+    [
+      593,
+      0.003500137245282531
+    ],
+    [
+      609,
+      0.0036224951036274433
+    ],
+    [
+      625,
+      0.0033588306978344917
+    ],
+    [
+      641,
+      0.003569988301023841
+    ],
+    [
+      657,
+      0.003387501696124673
+    ],
+    [
+      673,
+      0.0034910282120108604
+    ],
+    [
+      689,
+      0.003239727346226573
+    ],
+    [
+      705,
+      0.003077156376093626
+    ],
+    [
+      721,
+      0.0031544030643999577
+    ],
+    [
+      737,
+      0.003366310615092516
+    ],
+    [
+      753,
+      0.003009939333423972
+    ],
+    [
+      769,
+      0.0031186144333332777
+    ],
+    [
+      785,
+      0.0028333168011158705
+    ],
+    [
+      801,
+      0.003229037392884493
+    ],
+    [
+      817,
+      0.0030278703197836876
+    ],
+    [
+      833,
+      0.0030624198261648417
+    ],
+    [
+      849,
+      0.0030167431104928255
+    ],
+    [
+      865,
+      0.002871372038498521
+    ],
+    [
+      881,
+      0.002931000431999564
+    ],
+    [
+      897,
+      0.002864697016775608
+    ],
+    [
+      913,
+      0.0028550655115395784
+    ],
+    [
+      929,
+      0.0030576155986636877
+    ],
+    [
+      945,
+      0.0027278626803308725
+    ],
+    [
+      961,
+      0.0025692894123494625
+    ],
+    [
+      977,
+      0.0027796842623502016
+    ],
+    [
+      993,
+      0.002653765957802534
+    ]
+  ],
+  "batch_size_effective_after": 262144,
+  "loss_final": 0.00375244,
+  "loss_final_n_samples": 50,
+  "loss_window": 800,
+  "n_rays_per_batch_final": 6400,
+  "measured_batch_size_final": 270102,
+  "n_rays_effective_mean": 4238.2,
+  "n_rays_effective_std": 988.6,
+  "samples_per_batch_mean": 271044.0,
+  "samples_per_ray_mean": 63.95,
+  "batch_size_drift": 0.034,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/luis/tcc-nerf/scripts/ngp_worker.py\", line 555, in main\n    execute(args, metrics, sampler)\n  File \"/home/luis/tcc-nerf/scripts/ngp_worker.py\", line 360, in execute\n    testbed.load_training_data(args.test_transforms)\nRuntimeError: Could not allocate memory: /home/luis/instant-ngp/dependencies/tiny-cuda-nn/include/tiny-cuda-nn/gpu_memory.h:125 cudaMalloc((void**)&rawptr, n_bytes+DEBUG_GUARD_SIZE*2) failed: out of memory\n",
+  "vram_at_failure_mb": 5921.7,
+  "vram_peak_mb": 5546.6,
+  "vram_peak_process_mb": null,
+  "vram_peak_device_mb": 5994.2,
+  "vram_device_min_mb": 447.6,
+  "vram_method": "device_minus_baseline"
+}

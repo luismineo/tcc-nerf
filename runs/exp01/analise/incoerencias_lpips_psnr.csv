@@ -1,0 +1,4 @@
+run_tag,scene,T,F,L,delta_psnr_db,delta_lpips
+chair_T15_F8_L16_s0,chair,15,8,16,0.074,0.00202
+chair_T19_F2_L16_s0,chair,19,2,16,-0.14,-0.00023
+chair_T19_F4_L8_s0,chair,19,4,8,0.017,0.00021

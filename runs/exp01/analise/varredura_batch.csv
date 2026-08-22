@@ -1,0 +1,4 @@
+run_tag,scene,T,F,L,batch_size,psnr,ssim,lpips,vram_peak_mb,t_train_s,steps_per_s,n_rays_effective_mean,samples_per_ray_mean
+lego_T17_F4_L8_B65536_s0,lego,17,4,8,65536,30.8896,0.94705,0.03702,1634.6,39.428,126.81,10109.4,6.63
+lego_T17_F4_L8_B131072_s0,lego,17,4,8,131072,31.8182,0.95415,0.03109,1626.6,63.743,78.44,20082.9,6.59
+lego_T17_F4_L8_B262144_s0,lego,17,4,8,262144,32.31,0.95906,0.02813,1824.6,117.818,42.44,43112.5,6.1

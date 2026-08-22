@@ -1,0 +1,77 @@
+# ===========================================================================
+# Datasets e dependencias externas
+# ===========================================================================
+
+# 13 GB de capturas (Mip-NeRF 360 e Synthetic-NeRF), baixadas a parte.
+# A procedencia de cada cena esta registrada no manifest de cada experimento.
+data/
+
+# O fork do instant-ngp tem repositorio git proprio (vendor/instant-ngp/.git)
+# e 2.7 GB com o build. E dependencia externa, nao conteudo deste repo.
+vendor/
+
+# ===========================================================================
+# runs/ : resultados versionados SELETIVAMENTE
+#
+# Entra o que e leve e conclusivo -- metrics.json, *.csv, manifest.json,
+# graficos e folhas de contato. Da ordem de 20 MB no total.
+#
+# Fica de fora o que e pesado e reproduzivel a partir do codigo:
+#   renders/    1121 MB em 3484 PNGs de vistas renderizadas
+#   *.log        413 MB, quase tudo barra de progresso do instant-ngp
+#   snapshots/   ~39 MB por checkpoint de rede
+# ===========================================================================
+runs/**/renders/
+runs/**/snapshots/
+runs/**/*.log
+runs/*.log
+runs/**/*.ingp
+runs/**/*.msgpack
+
+# Trava de concorrencia de calib_resolucao.py e envelope_viabilidade.py.
+runs/.calib.lock
+
+# Sondagens de diagnostico do aabb_scale, substituidas por runs/aabb_check/.
+# Pode apagar a pasta inteira sem perda de resultado.
+runs/probe_ordem/
+
+# ===========================================================================
+# Temporarios gerados pelo proprio pipeline
+# ===========================================================================
+
+# Variantes de aabb_scale que o aabb_visual_check.py escreve na pasta da cena
+# (precisam ficar la para que os file_path resolvam) e apaga no fim.
+_aabb_tmp_*.json
+
+# Backups do rebase_transforms_paths.py.
+*.json.bak
+
+# ===========================================================================
+# Python
+# ===========================================================================
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ===========================================================================
+# Sistema e editores
+# ===========================================================================
+
+# O WSL cria um arquivo :Zone.Identifier ao lado de cada arquivo que veio do
+# lado Windows. Ja existem varios em docs/ e data/.
+*:Zone.Identifier
+
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+.idea/

@@ -1,0 +1,3 @@
+scene,factor,resolucao,n_train_images,status,vram_peak_mb,vram_baseline_mb,vram_peak_device_mb,vram_at_failure_mb,vram_method,n_params,n_encoding_params,steps_per_s,t_setup_s,t_total_s,error
+garden,8,648x420,185,ok,3448.4,454.1,3902.5,,device_minus_baseline,48801344,48784960,12.81,1.035,116.4,
+garden,4,1297x840,185,ok,4947.4,447.9,5395.3,,device_minus_baseline,48801344,48784960,13.32,1.043,159.6,

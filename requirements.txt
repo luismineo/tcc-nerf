@@ -1,0 +1,39 @@
+# Dependencias Python do pipeline (scripts/).
+#
+#   python3 -m pip install -r requirements.txt
+#
+# NAO inclui o pyngp: ele e o binding compilado do instant-ngp, produzido pelo
+# build em vendor/instant-ngp/build/ e carregado por caminho de arquivo pelos
+# scripts (--ngp-root), nao por pip. Compile o fork antes de rodar qualquer
+# coisa; sem ele nenhum script que toca a GPU funciona.
+#
+# Versoes fixadas nas que produziram os resultados em runs/, para que a
+# reexecucao seja comparavel.
+
+# --- numerico e imagem -----------------------------------------------------
+numpy==2.2.6
+scipy==1.15.3            # convolve1d, usado no SSIM proprio do instant-ngp
+pillow==12.3.0           # folhas de contato e miniaturas
+imageio==2.37.4          # gravacao dos PNGs de render (ngp_worker._write_png)
+scikit-image==0.25.2     # structural_similarity (SSIM do protocolo)
+
+# --- graficos --------------------------------------------------------------
+matplotlib==3.10.9       # curva de convergencia da Etapa 1.5
+
+# --- metrica perceptual ----------------------------------------------------
+# LPIPS AlexNet, a rede padrao da literatura NeRF.
+lpips==0.1.4
+
+# torch entra so por causa do LPIPS, e a build de CPU e proposital: o protocolo
+# roda LPIPS em CPU (ngp_worker --lpips-device cpu) justamente para nao disputar
+# VRAM com o treino, que e o recurso escasso numa RTX 2060 de 6 GB. Instalar a
+# build CUDA contamina a medicao de vram_peak_mb.
+#
+#   python3 -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+torch==2.13.0
+
+# --- telemetria de GPU -----------------------------------------------------
+# Fornece o modulo `pynvml`, usado pelo VramSampler do ngp_worker.
+# Nao instale o pacote `pynvml` avulso: ele esta depreciado, so redireciona para
+# este, e faz o worker emitir FutureWarning a cada execucao.
+nvidia-ml-py==13.610.43

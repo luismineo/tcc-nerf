@@ -1,0 +1,226 @@
+{
+  "exp_id": "calib2",
+  "created_at": "2026-08-17T01:32:13",
+  "n_runs": 3,
+  "grid": {
+    "T": [
+      15,
+      17,
+      19
+    ],
+    "F": [
+      2,
+      4,
+      8
+    ],
+    "L": [
+      4,
+      8,
+      16
+    ]
+  },
+  "network_paths": {
+    "T": "encoding.log2_hashmap_size",
+    "F": "encoding.n_features_per_level",
+    "L": "encoding.n_levels"
+  },
+  "third_axis_note": "O terceiro eixo e n_levels (L), nao training_batch_size. B nao e hiperparametro do modelo: com o numero de iteracoes fixo, reduzir B treina o MESMO modelo com menos amostras, confundindo orcamento de treino com capacidade. Ver README.",
+  "per_level_scale_rule": {
+    "formula": "b = (N_max / N_min) ** (1 / (L - 1))",
+    "n_min": 16,
+    "n_max": 2048,
+    "values": {
+      "4": 5.039684,
+      "8": 2.0,
+      "16": 1.381913
+    },
+    "why": "O base.json nao define per_level_scale e o tcnn assume b=2. Com b fixo, variar L mudaria tambem a resolucao mais fina (128 em L=4, 524288 em L=16). Derivando b, N_max fica constante em 2048 e L mede apenas o numero de niveis. L=8 devolve b=2, o base.json."
+  },
+  "batch_size_fixed": 262144,
+  "batch_sweep": [],
+  "batch_sweep_config": null,
+  "scenes": {
+    "lego": "data/nerf/downloads/lego"
+  },
+  "seeds": [
+    0
+  ],
+  "n_steps": 5000,
+  "test_stride": 4,
+  "spp": 8,
+  "lpips_device": "cpu",
+  "nerf_compatibility": true,
+  "timeout_s": 5400,
+  "background_color": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "background_note": "preto, identico ao bloco --test_transforms de scripts/run.py",
+  "base_config_path": "configs/nerf/base.json",
+  "base_config": {
+    "loss": {
+      "otype": "Huber"
+    },
+    "optimizer": {
+      "otype": "Ema",
+      "decay": 0.95,
+      "nested": {
+        "otype": "ExponentialDecay",
+        "decay_start": 20000,
+        "decay_interval": 10000,
+        "decay_base": 0.33,
+        "nested": {
+          "otype": "Adam",
+          "learning_rate": 0.01,
+          "beta1": 0.9,
+          "beta2": 0.99,
+          "epsilon": 1e-15,
+          "l2_reg": 1e-06
+        }
+      }
+    },
+    "encoding": {
+      "otype": "HashGrid",
+      "n_levels": 8,
+      "n_features_per_level": 4,
+      "log2_hashmap_size": 19,
+      "base_resolution": 16
+    },
+    "network": {
+      "otype": "FullyFusedMLP",
+      "activation": "ReLU",
+      "output_activation": "None",
+      "n_neurons": 64,
+      "n_hidden_layers": 1
+    },
+    "dir_encoding": {
+      "otype": "Composite",
+      "nested": [
+        {
+          "n_dims_to_encode": 3,
+          "otype": "SphericalHarmonics",
+          "degree": 4
+        },
+        {
+          "otype": "Identity"
+        }
+      ]
+    },
+    "rgb_network": {
+      "otype": "FullyFusedMLP",
+      "activation": "ReLU",
+      "output_activation": "None",
+      "n_neurons": 64,
+      "n_hidden_layers": 2
+    },
+    "distortion_map": {
+      "resolution": [
+        32,
+        32
+      ],
+      "optimizer": {
+        "otype": "ExponentialDecay",
+        "decay_start": 10000,
+        "decay_interval": 5000,
+        "decay_end": 25000,
+        "decay_base": 0.33,
+        "nested": {
+          "otype": "Adam",
+          "learning_rate": 0.0001,
+          "beta1": 0.9,
+          "beta2": 0.99,
+          "epsilon": 1e-08
+        }
+      }
+    },
+    "envmap": {
+      "loss": {
+        "otype": "RelativeL2"
+      },
+      "optimizer": {
+        "otype": "Ema",
+        "decay": 0.99,
+        "nested": {
+          "otype": "ExponentialDecay",
+          "decay_start": 10000,
+          "decay_interval": 5000,
+          "decay_base": 0.33,
+          "nested": {
+            "otype": "Adam",
+            "learning_rate": 0.01,
+            "beta1": 0.9,
+            "beta2": 0.99,
+            "beta3": 0.9,
+            "beta_shampoo": 0.0,
+            "epsilon": 1e-10,
+            "identity": 0.0001,
+            "cg_on_momentum": false,
+            "frobenius_normalization": true,
+            "l2_reg": 1e-10
+          }
+        }
+      }
+    }
+  },
+  "fixed_params": {
+    "n_levels": 8,
+    "base_resolution": 16,
+    "loss_otype": "Huber",
+    "network": {
+      "otype": "FullyFusedMLP",
+      "activation": "ReLU",
+      "output_activation": "None",
+      "n_neurons": 64,
+      "n_hidden_layers": 1
+    },
+    "rgb_network": {
+      "otype": "FullyFusedMLP",
+      "activation": "ReLU",
+      "output_activation": "None",
+      "n_neurons": 64,
+      "n_hidden_layers": 2
+    },
+    "optimizer": {
+      "otype": "Ema",
+      "decay": 0.95,
+      "nested": {
+        "otype": "ExponentialDecay",
+        "decay_start": 20000,
+        "decay_interval": 10000,
+        "decay_base": 0.33,
+        "nested": {
+          "otype": "Adam",
+          "learning_rate": 0.01,
+          "beta1": 0.9,
+          "beta2": 0.99,
+          "epsilon": 1e-15,
+          "l2_reg": 1e-06
+        }
+      }
+    }
+  },
+  "git_commit": "abe236ee00cf90cfca6e36e65c00435d5b21f50a",
+  "git_dirty": true,
+  "gpu": "NVIDIA GeForce RTX 2060, 591.86, 6144 MiB",
+  "nvcc": [
+    "indisponivel (FileNotFoundError)"
+  ],
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python": "3.10.12 (main, Jun 22 2026, 18:55:27) [GCC 11.4.0]",
+  "versions": {
+    "numpy": "1.26.4",
+    "skimage": "0.25.2",
+    "torch": "2.13.0+cpu",
+    "lpips": "?",
+    "pynvml": "?",
+    "scipy": "1.15.3",
+    "imageio": "2.37.4"
+  },
+  "execution_order": [
+    "lego_baseline_s0",
+    "lego_T15_F2_L4_s0",
+    "lego_T19_F8_L16_s0"
+  ]
+}
