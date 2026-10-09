@@ -132,3 +132,45 @@ O número de iterações deixa de ser uma escolha a defender e passa a ser uma
 escolha **testada**: a 5000 iterações, `garden` está a menos que o ruído do seu
 valor final, e `bonsai` está ~1 dB abaixo, mas com a ordenação entre
 configurações — que é o que uma Fronteira de Pareto afirma — intacta.
+
+---
+
+## Etapa 3 — Fronteira de viabilidade: não executada
+
+**Critério do plano:** executar apenas com linha de base abaixo de ~400 MB **e**
+oscilação menor que 50 MB em 12 amostras.
+
+**Medição em 2026-10-09 00:27**, GPU ociosa, nenhum aplicativo CUDA:
+
+```
+556 552 547 543 543 543 543 543 543 543 543 543   MiB
+```
+
+| condição | medido | critério | atende? |
+|---|---|---|---|
+| nível | ~545 MB | < ~400 MB | **não** |
+| oscilação | 13 MB | < 50 MB | sim |
+
+**Decisão: não executar.** O ambiente estava estável, e com essa estabilidade as
+margens previstas no fator 1,62 (configuração padrão excedendo em ~125 MB,
+configuração leve cabendo com ~278 MB) seriam 10–20× a oscilação — o teste
+possivelmente funcionaria. Mas o critério foi fixado antes da medição, e
+relaxá-lo depois de ver o valor é exatamente o tipo de decisão que o plano
+existe para impedir. Nenhum processo do usuário foi encerrado e nenhuma
+configuração do sistema foi alterada.
+
+Pesa também o achado da Etapa 1: a configuração "leve" preparada para o teste
+(`T15 F2 L8`) tem qualidade genuinamente baixa, ~14,7 dB em três medições. A
+afirmação resultante — "o padrão não treina, a configuração leve treina a
+14,7 dB" — seria fraca como demonstração mesmo se o teste desse certo.
+
+**Encaminhamento:** trabalho futuro. Duas condições para retomá-lo com
+proveito: linha de base abaixo de ~400 MB e uma configuração leve de qualidade
+aceitável (por exemplo `T19 F2 L8` ou `T15 F8 L4`, ambas na fronteira de
+`garden` com mais de 20 dB), o que exigiria recalcular o fator intermediário
+para a nova janela.
+
+**O que a medição registra, mesmo sem o teste:** a linha de base desta máquina
+variou, ao longo do projeto, de 254 a 1457 MB — desta vez 543 MB estáveis. Mais
+de 8 % da placa comprometida pelo desktop antes de qualquer experimento, numa
+fração que muda de sessão para sessão.
