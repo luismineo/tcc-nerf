@@ -450,6 +450,7 @@ literatura (Mildenhall et al., 2021; Müller et al., 2022)" por:**
 | Fig. 7 | convergência, Bonsai | `runs/exp02_convergence_bonsai/bonsai_f2/justificativa_iteracoes.png` | 3.2 |
 | Fig. 8 | ordenação a 5000 e 20 000 iterações, Bonsai | `runs/exp02_ordenacao/ordenacao.png` | 3.2 |
 | Fig. 10 | fronteira de Pareto com faixa de ruído | `runs/exp02_final/pareto_espessura.pdf` | 4.3 |
+| Fig. 11 | fronteira de Pareto com tempo de treino na área da bolha e sweet spot de cada cena | `runs/exp02_final/pareto_bolhas.pdf` (dados: `sweet_spot.csv`) | 4.3 |
 | Tab. 1 | calibração de resolução | seção C.2 acima | 2.3 |
 | Tab. 2 | baselines | `runs/exp02_final/tabelas.md` | 4.2 |
 | Tab. 3–4 | patamares por cena | `runs/exp02_final/tabelas.md` | 4.3 |
