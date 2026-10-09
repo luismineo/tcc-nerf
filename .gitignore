@@ -67,6 +67,9 @@ env/
 # O WSL cria um arquivo :Zone.Identifier ao lado de cada arquivo que veio do
 # lado Windows. Ja existem varios em docs/ e data/.
 *:Zone.Identifier
+# Quando o arquivo e criado pelo lado Windows, o ':' vira o caractere privado
+# U+F03A e o padrao acima nao casa.
+*Zone.Identifier
 
 .DS_Store
 Thumbs.db

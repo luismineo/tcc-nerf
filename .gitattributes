@@ -1,0 +1,8 @@
+# Normaliza fim de linha no repositorio. O modulo csv do Python grava CRLF e o
+# repositorio e manipulado tanto pelo WSL quanto pelo Windows; sem isso, cada
+# commit de um lado aparece como alteracao integral de todos os CSVs no outro.
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.jpg binary
+*.JPG binary
