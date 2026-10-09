@@ -37,8 +37,11 @@ otimizar. (EE §1)
 
 **Por que Garden e Bonsai?** Repetem o contraste do exp01 (Lego denso / Chair
 regular) entre tipos de captura: externa não-limitada, com vegetação e fundo
-distante, e interna, mais contida. O contraste se confirmou: Bonsai reconstrói
-7,6 dB melhor e consome ~940 MB a menos, mesmo com 94 imagens a mais. (TF)
+distante, e interna, mais contida. O contraste se confirmou em qualidade: Bonsai
+reconstrói 7,6 dB melhor. Em memória, cuidado: Garden consome ~940 MB a mais
+porque suas imagens somam 1,7× mais pixels (2678 contra 1576 MB na VRAM), não
+por ser mais complexa — descontadas as imagens, Garden consome *menos* (1641
+contra 1800 MB). (TF)
 
 **Por que o fator 2 de resolução?** É a maior resolução viável nas duas cenas.
 Na resolução original, só as imagens de treino — que o Instant-NGP mantém na
@@ -94,6 +97,12 @@ dispositivo mede o desktop junto. (PROTOCOLO-medicao.md)
    reexecutados: os dois encontrados reproduziram o valor original. (RF Etapa 1)
 4. Onde havia mais de uma medida, a tabela final usa a média; o padrão tem 5 e
    6 medidas. (RF Etapa 4)
+5. Se perguntarem se 0,244 dB é mesmo o teto do ruído: não é garantido. Com
+   todas as medições reunidas, uma configuração chegou a 0,34 dB. O limiar foi
+   fixado antes e mantido; a sensibilidade foi verificada
+   (`runs/exp02_final/sensibilidade_ruido.csv`): sweet spots e guia de Bonsai
+   não mudam até 0,35 dB; em Garden, a partir de 0,29 dB o padrão deixa de ser
+   um degrau distinto de `T19 F4 L4`.
 
 **Por que repetir com a mesma semente?** Para medir o não-determinismo residual
 das operações paralelas em GPU sob controle máximo. Variar a semente somaria a
@@ -122,7 +131,11 @@ fixado — e não foi executado. (RF Etapa 3)
 **Qual é o resultado prático?** Um guia por orçamento de memória (TF):
 - Garden: três patamares — `T19 F4 L4` (20,72 dB, 4040 MB), padrão (21,01 dB,
   4319 MB), `T19 F4 L16` (21,28 dB, 4845 MB). O padrão pode ser substituído por
-  `T19 F2 L8`: −0,15 dB (dentro do ruído), **−268 MB, −16 % de tempo**.
+  `T19 F2 L8`: −0,15 dB (dentro do ruído), **−268 MB, −16 % de tempo**. Os
+  degraus de Garden (+0,29 e +0,26 dB) estão perto do ruído — ver item 5 da
+  seção 3.
+- Sweet spot (joelho + empate no ruído + mais rápido): Garden `T19 F4 L4`
+  (−0,29 dB, −278 MB, −37 % de tempo contra o padrão); Bonsai, o próprio padrão.
 - Bonsai: cinco patamares, de 2905 a 5039 MB. O padrão já está na fronteira
   eficiente.
 
