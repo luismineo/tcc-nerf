@@ -1,6 +1,19 @@
 # Plano de fechamento do trabalho
 
-**Status:** aguardando sinal verde. Nenhuma etapa foi executada.
+**Status:** executado em 2026-10-08/09. Resultados e decisões de cada etapa em
+`RELATORIO-fechamento.md`.
+
+| etapa | decisão |
+|---|---|
+| 0 | estado congelado, tag `exp02-pre-fechamento` |
+| 1 | 2 suspeitos, ambos confirmados — nenhum ponto substituído |
+| 2 | ordem preservada — Etapa 2b dispensada |
+| 3 | não executada — linha de base (~545 MB) acima do critério |
+| 4 | guia por orçamento e fronteira com espessura em `runs/exp02_final/` |
+| 5 | texto proposto em `ARTIGO-v2-propostas.md` |
+| 6 | `DEFESA-perguntas.md` |
+
+O texto abaixo é o plano como foi aprovado, sem alterações posteriores.
 
 Princípio que organiza o plano: cada etapa tem um **critério de decisão fixado
 antes de rodar**, para que o resultado não possa ser interpretado depois na
