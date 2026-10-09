@@ -174,3 +174,87 @@ para a nova janela.
 variou, ao longo do projeto, de 254 a 1457 MB — desta vez 543 MB estáveis. Mais
 de 8 % da placa comprometida pelo desktop antes de qualquer experimento, numa
 fração que muda de sessão para sessão.
+
+---
+
+## Etapa 4 — Consolidação analítica
+
+**Script:** `scripts/consolidacao_final.py`
+**Saídas:** `runs/exp02_final/` — `tabelas.md` (pronto para o artigo),
+`guia_{cena}.csv`, `grid_{cena}.csv`, `baselines.csv`,
+`pareto_espessura.png/.pdf`
+
+### Duas decisões de método tomadas durante a consolidação
+
+**1. Agregar todas as medições de cada configuração.** A primeira versão
+comparava cada ponto do grid (n=1) contra **uma** medida do padrão — e o
+"substituto do padrão" em `garden` saiu a −0,23 dB, no limite do limiar de
+0,244. Mas o modelo padrão havia sido medido cinco vezes sem outlier em `garden`
+(20,889 · 21,135 · 21,054 · 20,965 · 21,031) e seis em `bonsai`, e várias
+configurações tinham três ou mais medidas. Cada ponto passou a ser a **média de
+todas as medições a 5000 iterações** disponíveis (grid, baselines, variância,
+triagem), com `n` e procedência registrados por linha. A execução anômala
+`garden/base_json/rep2` fica excluída pelo critério já declarado em
+`analise_variancia.py`. O padrão (`base.json`) é tratado como o ponto
+`T19 F4 L8`, que é o mesmo modelo desde a correção do `per_level_scale`.
+
+**2. Aplicar também o ruído de VRAM.** A validação de variância mostrou
+amplitude de até **122 MB** em `vram_peak_mb` entre execuções idênticas.
+Diferenças de VRAM menores que isso não são economia. O guia passou a exigir que
+cada degrau seja mensuravelmente melhor (> 0,244 dB) **e** mensuravelmente mais
+caro (> 122 MB) que o anterior; o "substituto do padrão" passou a exigir
+economia maior que 122 MB.
+
+### Guia por orçamento de VRAM
+
+Construído como escada: cada degrau é a configuração mais barata que seja
+mensuravelmente melhor que o anterior. Entre degraus, VRAM adicional não compra
+qualidade mensurável.
+
+**`bonsai`** (5000 iterações; valores absolutos ~1 dB abaixo de 20 000, ordem
+preservada):
+
+| degrau | config | n | VRAM | PSNR | ganho | custo |
+|---|---|---|---|---|---|---|
+| 1 | `T17 F2 L8` | 1 | 2905 | 26,50 | — | — |
+| 2 | `T19 F2 L8` | 4 | 3131 | 27,69 | +1,18 dB | +226 MB |
+| 3 | `T19 F4 L8` (padrão) | 6 | 3376 | 28,62 | +0,93 dB | +245 MB |
+| 4 | `T19 F8 L8` | 1 | 3955 | 29,13 | +0,52 dB | +579 MB |
+| 5 | `T19 F8 L16` | 1 | 5039 | 29,52 | +0,39 dB | +1084 MB |
+
+**`garden`:**
+
+| degrau | config | n | VRAM | PSNR | ganho | custo |
+|---|---|---|---|---|---|---|
+| 1 | `T19 F4 L4` | 4 | 4040 | 20,72 | — | — |
+| 2 | `T19 F4 L8` (padrão) | 5 | 4319 | 21,01 | +0,29 dB | +278 MB |
+| 3 | `T19 F4 L16` | 1 | 4845 | 21,28 | +0,26 dB | +526 MB |
+
+### Achados
+
+**O padrão está na borda eficiente nas duas cenas.** Em `bonsai` ele é um
+degrau do guia e nenhuma configuração equivalente é mensuravelmente mais barata.
+Em `garden` também é um degrau, mas existe um substituto: **`T19 F2 L8` —
+−0,15 dB (dentro do ruído), −268 MB (−6,2 %), −16 % de tempo de treino.**
+
+**Em `garden`, abaixo de ~4040 MB não há economia mensurável.** Quatro
+configurações foram removidas do guia por custarem o mesmo que um degrau melhor:
+`T15 F2 L8` (14,71 dB), `T15 F4 L4` (15,98), `T19 F2 L4` (17,80) e
+`T15 F8 L4` (20,37), todas entre 3907 e 4035 MB. O consumo nessa faixa é
+dominado pelas imagens de treino (2677 MB) e pelo custo fixo; escolher a
+configuração mais fraca só perde qualidade.
+
+**A "candidata" anterior de `garden` (`T15 F8 L4`) cai.** `T19 F4 L4` custa o
+mesmo e rende +0,35 dB, diferença mensurável (confirmada também na validação de
+variância). A única vantagem da candidata é o tempo de treino: 73 s contra 92 s.
+
+**O topo do grid não compra qualidade mensurável em `garden`.** A configuração de
+maior PSNR (`T19 F8 L16`, 21,47 dB, 5254 MB) não é um degrau: está a +0,19 dB de
+`T19 F4 L16`, dentro do ruído, por +409 MB. Em `bonsai` o topo ainda é degrau
+(+0,39 dB), mas o último degrau custa 1084 MB — mais que todos os anteriores
+somados.
+
+**A alavanca útil é menor que a alavanca bruta.** Medida de ponta a ponta do
+grid, a VRAM varia ~1,3 GB em `garden` e ~2,1 GB em `bonsai`. Mas em `garden` a
+faixa mensuravelmente útil vai de 4040 a 4845 MB, ~0,8 GB, por 0,56 dB de
+ganho. É esse número, e não a amplitude bruta, que o texto deve usar.

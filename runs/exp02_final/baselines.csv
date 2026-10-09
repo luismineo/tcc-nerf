@@ -1,0 +1,3 @@
+scene,n,psnr,psnr_amplitude,ssim,lpips,vram,t_train,procedencia
+bonsai,6,28.617,0.197499999999998,0.8649399999999999,0.2177916666666667,3375.6666666666665,150.1715,baseline-avulso+grid+grid-baseline+variancia
+garden,5,21.014580000000002,0.24520000000000053,0.49471,0.558084,4318.54,146.4134,baseline-avulso+grid+grid-baseline+variancia
