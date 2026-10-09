@@ -1,0 +1,4 @@
+scene,eixo,de,para,psnr_de,psnr_para,queda_db,suspeito
+garden,L,T15 F2 L4,T15 F2 L8,16.2165,14.805,1.4115,garden_T15_F2_L8
+garden,F,T19 F4 L4,T19 F8 L4,20.6768,19.2715,1.4053,garden_T19_F8_L4
+garden,T,T17 F8 L4,T19 F8 L4,20.1809,19.2715,0.9094,garden_T19_F8_L4
