@@ -35,6 +35,7 @@ vistas contra 19.84 com 3, entao a avaliacao leve nao serve para qualidade.
 import argparse
 import csv
 import json
+import os
 import subprocess
 import sys
 import time
@@ -74,30 +75,64 @@ def parse_target(text):
     return scene, int(factor)
 
 
-def build_network(exp_dir, name, T, F, L):
+def build_network(exp_dir, name, T, F, L, aabb_scale=1):
     base_cfg = json.loads(
         (PROJECT_ROOT / "vendor" / "instant-ngp" / "configs" / "nerf" / "base.json").read_text()
     )
     gr.validate_grid(base_cfg)
     path = exp_dir / f"network_{name}_T{T}_F{F}_L{L}.json"
-    gr.write_network_json({"T": T, "F": F, "L": L, "is_baseline": False}, base_cfg, path)
+    gr.write_network_json(
+        {"T": T, "F": F, "L": L, "is_baseline": False, "aabb_scale": aabb_scale},
+        base_cfg, path)
     return path
 
 
-def run_one(scene, factor, cfg_name, T, F, L, network, args):
+def jsons_do_alvo(scene, factor, args):
+    """Caminhos de treino e teste, com ou sem divisao retida."""
+    sd = PROJECT_ROOT / "data" / "mip_nerf" / scene
+    if args.split:
+        return (sd / f"transforms_f{factor}_train.json",
+                sd / f"transforms_f{factor}_test.json")
     sj = scene_json(scene, factor)
-    if not sj.exists():
+    return sj, sj
+
+
+def variante_aabb(base_json, aabb_scale, destino):
+    d = json.loads(Path(base_json).read_text())
+    d["aabb_scale"] = int(aabb_scale)
+    Path(destino).write_text(json.dumps(d, indent=2))
+
+
+def run_one(scene, factor, cfg_name, T, F, L, network, args):
+    base_tr, base_te = jsons_do_alvo(scene, factor, args)
+    faltando = [p for p in (base_tr, base_te) if not p.exists()]
+    if faltando:
         return {"scene": scene, "factor": factor, "config": cfg_name,
-                "status": "sem_json", "error": f"{sj} nao existe"}
+                "status": "sem_json",
+                "error": "nao existe: " + ", ".join(p.name for p in faltando)}
 
     out_dir = PROJECT_ROOT / "runs" / args.exp_id / f"{scene}_f{factor}_{cfg_name}"
     out_dir.mkdir(parents=True, exist_ok=True)
-    res = resolucao(sj)
+    res = resolucao(base_tr)
+
+    # aabb_scale nao vive no network.json, e sim no transforms. Sobrescreve-lo
+    # exige uma copia do JSON da cena por execucao, na pasta da cena para os
+    # file_path continuarem resolvendo. PID no nome evita colisao entre
+    # execucoes simultaneas.
+    sj_train, sj_test = base_tr, base_te
+    temporarios = []
+    if args.aabb_scale is not None:
+        marca = os.getpid()
+        sj_train = base_tr.parent / f"_env_{marca}_train_f{factor}_{cfg_name}.json"
+        sj_test = base_te.parent / f"_env_{marca}_test_f{factor}_{cfg_name}.json"
+        variante_aabb(base_tr, args.aabb_scale, sj_train)
+        variante_aabb(base_te, args.aabb_scale, sj_test)
+        temporarios = [sj_train, sj_test]
 
     cmd = [
         sys.executable, str(PROJECT_ROOT / "scripts" / "ngp_worker.py"),
-        "--scene", str(sj),
-        "--test-transforms", str(sj),
+        "--scene", str(sj_train),
+        "--test-transforms", str(sj_test),
         "--network", str(network),
         "--out-dir", str(out_dir),
         "--n-steps", str(args.n_steps),
@@ -125,6 +160,9 @@ def run_one(scene, factor, cfg_name, T, F, L, network, args):
         except subprocess.TimeoutExpired:
             proc.kill()
             proc.wait()
+    finally:
+        for p in temporarios:
+            p.unlink(missing_ok=True)
     t_total = time.perf_counter() - t0
 
     mp = out_dir / "metrics.json"
@@ -174,6 +212,10 @@ def main():
     ap.add_argument("--lpips-device", default="none", choices=["cpu", "cuda", "none"])
     ap.add_argument("--timeout", type=int, default=10800)
     ap.add_argument("--exp-id", default="etapa1_envelope")
+    ap.add_argument("--aabb-scale", type=int, default=None,
+                    help="sobrescreve o aabb_scale do transforms da cena")
+    ap.add_argument("--split", action="store_true",
+                    help="usa transforms_f<N>_train/_test.json em vez do JSON completo")
     args = ap.parse_args()
 
     targets = [parse_target(t) for t in args.targets]
@@ -181,7 +223,13 @@ def main():
     exp_dir.mkdir(parents=True, exist_ok=True)
     _lock = acquire_lock(PROJECT_ROOT / "runs" / ".calib.lock")  # noqa: F841
 
-    networks = {name: build_network(exp_dir, name, T, F, L)
+    # Sem --aabb-scale, o valor efetivo e o que vive no transforms da cena.
+    aabb_ref = args.aabb_scale
+    if aabb_ref is None:
+        cena0, fator0 = targets[0]
+        tr0, _ = jsons_do_alvo(cena0, fator0, args)
+        aabb_ref = json.loads(tr0.read_text()).get("aabb_scale", 1)
+    networks = {name: build_network(exp_dir, name, T, F, L, aabb_ref)
                 for name, T, F, L in CONFIGS}
     print("configuracoes do envelope:")
     for name, T, F, L in CONFIGS:

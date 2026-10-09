@@ -86,12 +86,15 @@ def resolucao(path):
     return f"{int(d['w'])}x{int(d['h'])}"
 
 
-def build_network(out_path):
+def build_network(out_path, aabb_scale=1):
     base_cfg = json.loads(
         (PROJECT_ROOT / "vendor" / "instant-ngp" / "configs" / "nerf" / "base.json").read_text()
     )
     gr.validate_grid(base_cfg)
-    run = {"T": CALIB_T, "F": CALIB_F, "L": CALIB_L, "is_baseline": False}
+    # aabb_scale exigido pelo write_network_json desde que o per_level_scale
+    # passou a ser derivado por cena (N_max = 2048 * aabb_scale).
+    run = {"T": CALIB_T, "F": CALIB_F, "L": CALIB_L, "is_baseline": False,
+           "aabb_scale": aabb_scale}
     out_path.parent.mkdir(parents=True, exist_ok=True)
     gr.write_network_json(run, base_cfg, out_path)
     cfg = json.loads(out_path.read_text())
@@ -198,7 +201,11 @@ def main():
     exp_dir = PROJECT_ROOT / "runs" / args.exp_id
     exp_dir.mkdir(parents=True, exist_ok=True)
     _lock = acquire_lock(PROJECT_ROOT / "runs" / ".calib.lock")  # noqa: F841
-    network = build_network(exp_dir / f"network_T{CALIB_T}_F{CALIB_F}_L{CALIB_L}.json")
+    # O aabb_scale vive no transforms da cena; le do primeiro alvo da varredura.
+    aabb_ref = json.loads(scene_json(args.scenes[0], args.factors[0]).read_text()
+                          ).get("aabb_scale", 1)
+    network = build_network(
+        exp_dir / f"network_T{CALIB_T}_F{CALIB_F}_L{CALIB_L}.json", aabb_ref)
 
     rows = []
     for scene in args.scenes:

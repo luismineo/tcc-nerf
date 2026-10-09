@@ -1,0 +1,4 @@
+scene,factor,resolucao,config,T,F,L,n_train_images,status,vram_peak_device_mb,vram_livre_mb,vram_peak_mb,vram_baseline_mb,vram_at_failure_mb,n_params,n_encoding_params,psnr,psnr_median,ssim,test_views,steps_per_s,t_setup_s,t_train_s,t_eval_s,t_total_s,error
+garden,2,2594x1681,leve,15,2,4,161,ok,4315.0,1829.0,3901.7,413.3,,214016,204800,16.4254,17.1201,0.33461,24,72.48,1.969,68.988,59.296,130.6,
+garden,2,2594x1681,mediana,17,4,8,161,ok,4523.8,1620.2,4114.7,409.1,,3303424,3293184,20.82,20.9387,0.45998,24,46.89,1.929,106.637,53.128,162.0,
+garden,2,2594x1681,pesada,19,8,16,161,ok,6065.4,78.6,5656.2,409.2,,48801344,48784960,21.4272,21.6347,0.54224,24,17.68,1.9,282.738,68.849,353.9,

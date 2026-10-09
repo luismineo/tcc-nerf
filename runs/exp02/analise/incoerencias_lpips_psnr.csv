@@ -1,0 +1,4 @@
+run_tag,scene,T,F,L,delta_psnr_db,delta_lpips
+garden_T17_F8_L16_s0,garden,17,8,16,0.075,0.0011
+bonsai_T17_F4_L16_s0,bonsai,17,4,16,0.127,0.01088
+bonsai_T19_F4_L8_s0,bonsai,19,4,8,0.002,0.00226

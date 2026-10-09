@@ -1,0 +1,5 @@
+factor,resolucao,aabb_scale,status,veredito,motivo,imagens_mb,steps_rel,psnr,psnr_median,psnr_std,ssim,ssim_ngp,loss_final,vram_peak_mb,vram_peak_device_mb,vram_livre_mb,vram_baseline_mb,vram_at_failure_mb,dentro_da_janela,n_train_images,n_test_images,test_views,megapixels_treino,n_params,n_encoding_params,samples_per_ray_mean,n_rays_effective_mean,steps_per_s,t_train_s,t_eval_s,t_total_s,error
+8,648x420,4,ok,viavel,,167.2,1.012,22.5319,22.6326,1.8561,0.66991,0.66159,0.00350189,1322.4,1905.0,4239.0,582.6,,False,161,24,24,43.8,12865536,12855296,12.28,21498.8,34.04,146.901,7.76,0.0,
+4,1297x840,4,ok,viavel,,669.1,0.977,21.3492,21.5011,1.5933,0.54522,0.54701,0.00466166,2053.3,2611.6,3532.4,558.3,,False,161,24,24,175.4,12865536,12855296,12.22,21618.9,32.85,152.223,24.886,0.0,
+2,2594x1681,4,ok,viavel,,2678.1,1.0,20.987,21.0976,1.4415,0.49394,0.53775,0.00516843,4311.8,4882.8,1261.2,571.0,,False,161,24,24,702.0,12865536,12855296,11.81,22329.5,33.63,148.689,95.736,0.0,
+1,5187x3361,4,sem_metrics,sem_metrics,worker nao gravou metrics.json,,,,,,,,,,,,,,,,,,2806.8,,,,,,,,0.0,worker nao gravou metrics.json

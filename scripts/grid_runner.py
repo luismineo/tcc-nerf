@@ -44,7 +44,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_NGP_ROOT = PROJECT_ROOT / "vendor" / "instant-ngp"
-DEFAULT_DATA_ROOT = PROJECT_ROOT / "data" / "nerf_synthetic"
+DEFAULT_DATA_ROOT = PROJECT_ROOT / "data" / "mip_nerf"
 DEFAULT_OUT_ROOT = PROJECT_ROOT / "runs"
 WORKER = Path(__file__).resolve().parent / "ngp_worker.py"
 
@@ -89,7 +89,28 @@ NETWORK_PATHS = {
 # Com N_min=16 e N_max=2048, L=8 devolve b=2.0000 — exatamente o base.json, de
 # modo que o baseline continua intocado e coincide com um ponto do grid.
 GRID_N_MIN = 16       # encoding.base_resolution do base.json
-GRID_N_MAX = 2048     # resolucao mais fina alvo, mantida constante entre os L
+GRID_N_MAX_UNIT = 2048  # resolucao mais fina alvo SOBRE O CUBO UNITARIO
+
+# CORRECAO exp02. O comentario acima descrevia o comportamento do exp01 e
+# tornou-se falso ao migrar para cena real. O tiny-cuda-nn NAO assume b=2
+# quando per_level_scale esta ausente: quem decide e o Instant-NGP, em
+# testbed.cu:4248, e ele DERIVA o valor a partir do aabb_scale:
+#
+#     b = exp( log(2048 * aabb_scale / base_resolution) / (L - 1) )
+#
+# No Synthetic-NeRF o aabb_scale esta ausente do transforms, o ngp assume 1, e
+# a formula devolve exatamente 2.0 -- por isso a afirmacao valia no exp01. Com
+# o aabb_scale=4 de garden ela devolve 2.438.
+#
+# Consequencia se nao corrigido: o baseline (base.json intocado) receberia
+# b=2.438 enquanto o ponto de grid L=8 receberia b=2.0, ou seja, resolucao mais
+# fina 4x diferente. Baseline e grid deixariam de ser comparaveis, e a intencao
+# declarada -- "L=8 coincide com o base.json" -- se perderia em silencio.
+#
+# A correcao preserva a intencao original: o alvo passa a ser o mesmo que o ngp
+# usaria, 2048 * aabb_scale sobre o cubo unitario.
+def grid_n_max(aabb_scale):
+    return GRID_N_MAX_UNIT * aabb_scale
 
 # B (training_batch_size) deixa de ser eixo e passa a variavel controlada.
 # Motivo metodologico: B nao e hiperparametro do modelo. Reduzir B com o numero
@@ -101,18 +122,45 @@ FIXED_BATCH_SIZE = 262144   # default do instant-ngp (1<<18)
 # Varredura separada de B, numa configuracao mediana de Lego, reportada a parte
 # como "efeito do orcamento de amostras, sob controle".
 BATCH_SWEEP = [65536, 131072, 262144]
-BATCH_SWEEP_CONFIG = {"scene": "lego", "T": 17, "F": 4, "L": 8}
+BATCH_SWEEP_CONFIG = {"scene": "garden", "T": 17, "F": 4, "L": 8}
 
 
-def per_level_scale(n_levels):
-    """b tal que N_min * b^(L-1) == N_max."""
+def per_level_scale(n_levels, aabb_scale):
+    """b tal que N_min * b^(L-1) == N_max, com N_max = 2048 * aabb_scale.
+
+    Com esse alvo, L=8 devolve exatamente o b que o Instant-NGP derivaria do
+    base.json intocado -- entao o baseline coincide com um ponto do grid, que
+    era a intencao declarada do desenho.
+    """
     if n_levels <= 1:
         return 1.0
-    return (GRID_N_MAX / GRID_N_MIN) ** (1.0 / (n_levels - 1))
+    return (grid_n_max(aabb_scale) / GRID_N_MIN) ** (1.0 / (n_levels - 1))
+
+
+def aabb_da_cena(data_root, scene):
+    """Le o aabb_scale do transforms da cena -- ele vive no dado, nao no grid."""
+    fator = DOWNSAMPLE[scene]
+    p = Path(data_root) / SCENES[scene] / f"transforms_f{fator}_train.json"
+    return int(json.loads(p.read_text())["aabb_scale"])
 
 # Nome da cena -> subdiretorio em data/nerf_synthetic/. Cada um precisa conter
 # transforms_train.json e transforms_test.json.
-SCENES = {"lego": "lego", "chair": "chair"}
+# exp02: cenas reais nao-limitadas do Mip-NeRF 360. O exp01 rodava
+# {"lego","chair"} em data/nerf_synthetic e continua valido como estudo
+# preliminar -- para reproduzi-lo, passe --data-root e --scenes.
+SCENES = {"garden": "garden", "bonsai": "bonsai"}
+
+# Fator de reducao calibrado por cena (Etapa 1). Define QUAL transforms e usado:
+# transforms_f<N>_train.json / _test.json, gerados pelo split_holdout.py.
+#
+# Ambas calibradas na Etapa 1 (ver docs/RELATORIO-etapa1-calibracao.md):
+#   garden  f2 2594x1681, aabb_scale=4, split 161/24
+#   bonsai  f2 1559x1039, aabb_scale=8, split 255/37
+# O aabb_scale otimo DIFERE entre as cenas, entao o per_level_scale derivado
+# tambem difere (N_max = 2048 * aabb_scale). Os efeitos de T/F/L permanecem
+# comparaveis dentro de cada cena; os valores absolutos de b, nao entre elas.
+DOWNSAMPLE = {"garden": 2, "bonsai": 2}
+SCENES_CALIBRADAS = {"garden", "bonsai"}
 
 SEEDS = [0]
 
@@ -208,6 +256,13 @@ def build_runs(args):
                         "kind": "batch_sweep", "scene": c["scene"], "is_baseline": False,
                         "seed": seed, "T": c["T"], "F": c["F"], "L": c["L"], "B": B,
                     })
+    # O aabb_scale vem do transforms da cena, nao do grid: e ele que define o
+    # alvo de resolucao mais fina e, portanto, o per_level_scale de cada run.
+    cache = {}
+    for r in runs:
+        if r["scene"] not in cache:
+            cache[r["scene"]] = aabb_da_cena(args.data_root, r["scene"])
+        r["aabb_scale"] = cache[r["scene"]]
     return runs
 
 
@@ -220,7 +275,8 @@ def write_network_json(run, base_cfg, path):
         set_by_path(cfg, NETWORK_PATHS["L"], run["L"])
         # per_level_scale nao existe no base.json, entao e inserido (nao
         # sobrescrito): set_by_path exigiria a chave preexistente.
-        cfg["encoding"]["per_level_scale"] = round(per_level_scale(run["L"]), 6)
+        cfg["encoding"]["per_level_scale"] = round(
+            per_level_scale(run["L"], run["aabb_scale"]), 6)
     path.write_text(json.dumps(cfg, indent=2))
     return cfg
 
@@ -252,14 +308,24 @@ def collect_manifest(args, base_cfg, runs):
             "treino com capacidade. Ver README."
         ),
         "per_level_scale_rule": {
-            "formula": "b = (N_max / N_min) ** (1 / (L - 1))",
-            "n_min": GRID_N_MIN, "n_max": GRID_N_MAX,
-            "values": {L: round(per_level_scale(L), 6) for L in GRID["L"]},
+            "formula": "b = (2048 * aabb_scale / N_min) ** (1 / (L - 1))",
+            "n_min": GRID_N_MIN,
+            "n_max_por_cena": {s: grid_n_max(aabb_da_cena(args.data_root, s))
+                               for s in args.scenes},
+            "values": {
+                s: {L: round(per_level_scale(L, aabb_da_cena(args.data_root, s)), 6)
+                    for L in GRID["L"]}
+                for s in args.scenes},
             "why": (
-                "O base.json nao define per_level_scale e o tcnn assume b=2. Com b "
-                "fixo, variar L mudaria tambem a resolucao mais fina (128 em L=4, "
-                "524288 em L=16). Derivando b, N_max fica constante em 2048 e L "
-                "mede apenas o numero de niveis. L=8 devolve b=2, o base.json."
+                "O base.json nao define per_level_scale, e quem preenche NAO e o "
+                "tcnn com b=2: e o Instant-NGP, que deriva o valor do aabb_scale "
+                "em testbed.cu:4248. Com b fixo, variar L mudaria tambem a "
+                "resolucao mais fina e todo o efeito seria atribuido a L. "
+                "Derivando b com N_max = 2048 * aabb_scale, N_max fica constante "
+                "entre os L e L=8 reproduz exatamente o b do base.json, de modo "
+                "que o baseline coincide com um ponto do grid. No exp01 o "
+                "aabb_scale estava ausente (o ngp assume 1) e a formula devolvia "
+                "b=2; em garden, com aabb_scale=4, devolve 2.438."
             ),
         },
         "batch_size_fixed": FIXED_BATCH_SIZE,
@@ -362,7 +428,8 @@ def row_from_metrics(run, metrics, mlp_impl):
         "T": "" if run["T"] is None else run["T"],
         "F": "" if run["F"] is None else run["F"],
         "L": "" if run["L"] is None else run["L"],
-        "per_level_scale": "" if run["L"] is None else round(per_level_scale(run["L"]), 6),
+        "per_level_scale": "" if run["L"] is None else round(
+            per_level_scale(run["L"], run["aabb_scale"]), 6),
         "batch_size": metrics.get("batch_size", "" if run["B"] is None else run["B"]),
         "n_steps": metrics.get("n_steps", ""),
         "status": metrics.get("status", "crash"),
@@ -412,14 +479,18 @@ def run_one(args, run, index, total, base_cfg, exp_dir):
     write_network_json(run, base_cfg, network_path)
 
     scene_dir = Path(args.data_root) / SCENES[run["scene"]]
+    fator = DOWNSAMPLE[run["scene"]]
     batch_size = run["B"]
 
     cmd = [
         sys.executable, str(WORKER),
-        # transforms_train.json explicito: passar o diretorio faria o loader
-        # varrer train+val+test e treinar sobre o conjunto de teste.
-        "--scene", str(scene_dir / "transforms_train.json"),
-        "--test-transforms", str(scene_dir / "transforms_test.json"),
+        # JSON de treino explicito, nunca o diretorio: passar a pasta faria o
+        # loader varrer tudo e treinar sobre o conjunto de teste. O sufixo
+        # _f<N> carrega a resolucao calibrada na Etapa 1.
+        "--scene", str(scene_dir / f"transforms_f{fator}_train.json"),
+        "--test-transforms", str(scene_dir / f"transforms_f{fator}_test.json"),
+        "--dataset", run["scene"],
+        "--downsample-factor", str(fator),
         "--network", str(network_path),
         "--out-dir", str(run_dir),
         "--n-steps", str(args.n_steps),
@@ -543,7 +614,10 @@ def main():
     ap.add_argument("--ngp-root", default=str(DEFAULT_NGP_ROOT),
                     help="raiz do fork do instant-ngp (contem build/ e configs/)")
     ap.add_argument("--data-root", default=str(DEFAULT_DATA_ROOT),
-                    help="diretorio com uma pasta por cena do Synthetic-NeRF")
+                    help="diretorio com uma pasta por cena (padrao: data/mip_nerf)")
+    ap.add_argument("--permitir-nao-calibrada", action="store_true",
+                    help="roda cenas que ainda nao passaram pela Etapa 1 e pela "
+                         "validacao de aabb_scale; use so deliberadamente")
     ap.add_argument("--base-config", default=None,
                     help="padrao: <ngp-root>/configs/nerf/base.json")
     ap.add_argument("--scenes", nargs="+", default=list(SCENES), choices=list(SCENES))
@@ -604,11 +678,27 @@ def main():
     base_cfg = json.loads(base_path.read_text())
     validate_grid(base_cfg)
 
+    nao_calibradas = [s for s in args.scenes if s not in SCENES_CALIBRADAS]
+    if nao_calibradas and not args.permitir_nao_calibrada:
+        raise SystemExit(
+            f"cena(s) sem calibracao confirmada: {', '.join(nao_calibradas)}.\n"
+            "A Etapa 1 (resolucao) e a validacao de aabb_scale precisam estar "
+            "feitas antes do grid -- rodar sem isso repete o erro que invalidou "
+            "30 000 iteracoes em garden.\n"
+            "Se for deliberado, use --permitir-nao-calibrada e registre o motivo."
+        )
+
     for scene in args.scenes:
         scene_dir = Path(args.data_root) / SCENES[scene]
-        for name in ("transforms_train.json", "transforms_test.json"):
+        fator = DOWNSAMPLE[scene]
+        for name in (f"transforms_f{fator}_train.json", f"transforms_f{fator}_test.json"):
             if not (scene_dir / name).exists():
-                raise SystemExit(f"dataset ausente: {scene_dir / name}")
+                raise SystemExit(
+                    f"dataset ausente: {scene_dir / name}\n"
+                    f"Gere com: python3 scripts/split_holdout.py "
+                    f"--in-json {scene_dir}/transforms_f{fator}.json "
+                    f"--holdout-every 8 --out-prefix {scene_dir}/transforms_f{fator}"
+                )
 
     runs = build_runs(args)
     if args.only:
@@ -634,10 +724,14 @@ def main():
         print(f"Disco previsto para renders: {est['disk_mb']:.0f} MB")
 
     if args.dry_run:
-        print("\nper_level_scale derivado (N_min=%d, N_max=%d):" % (GRID_N_MIN, GRID_N_MAX))
-        for L in GRID["L"]:
-            b = per_level_scale(L)
-            print(f"  L={L:2d}  b={b:.4f}  resolucao mais fina = {GRID_N_MIN * b**(L-1):.0f}")
+        for s in args.scenes:
+            aabb = aabb_da_cena(args.data_root, s)
+            print(f"\nper_level_scale derivado — {s} "
+                  f"(aabb_scale={aabb}, N_min={GRID_N_MIN}, N_max={grid_n_max(aabb)}):")
+            for L in GRID["L"]:
+                b = per_level_scale(L, aabb)
+                print(f"  L={L:2d}  b={b:.4f}  "
+                      f"resolucao mais fina = {GRID_N_MIN * b**(L-1):.0f}")
 
         print("\nOrdem de execucao:")
         for i, r in enumerate(runs, 1):

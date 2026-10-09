@@ -1,0 +1,25 @@
+{
+  "csv": "runs/exp02/results.csv",
+  "n_rows": 56,
+  "n_unique_runs": 56,
+  "n_usable": 56,
+  "scenes": [
+    "bonsai",
+    "garden"
+  ],
+  "front_sizes": {
+    "bonsai": 19,
+    "garden": 14
+  },
+  "psnr_tolerance_db": -2.0,
+  "n_within_tolerance": 35,
+  "n_lpips_psnr_disagreements": 3,
+  "figures": [
+    "pareto_psnr_vram.png",
+    "pareto_psnr_vram.pdf",
+    "pareto_psnr_tempo.png",
+    "pareto_psnr_tempo.pdf",
+    "degradacao_baseline.png",
+    "degradacao_baseline.pdf"
+  ]
+}

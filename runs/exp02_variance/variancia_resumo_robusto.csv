@@ -1,0 +1,9 @@
+scene,config,n_total,n_sem_outlier,psnr_media_com,psnr_amplitude_com,psnr_media_sem,psnr_amplitude_sem,psnr_desvio_sem,vram_media_sem,vram_amplitude_sem
+bonsai,base_json,3,3,28.6114,0.1975,28.6114,0.1975,0.1093,3373.1,95.2
+bonsai,candidata,3,3,27.6817,0.1263,27.6817,0.1263,0.0659,3138.1,64.5
+bonsai,padrao_artigo,3,3,28.7136,0.0228,28.7136,0.0228,0.0115,3426.9,97.9
+bonsai,vizinha,3,3,27.6955,0.1134,27.6955,0.1134,0.0598,3190.2,107.4
+garden,base_json,3,2,20.3819,1.8803,20.9977,0.0659,0.0466,4321.8,14.4
+garden,candidata,3,3,20.3854,0.0761,20.3854,0.0761,0.0423,4051.2,18.1
+garden,padrao_artigo,3,3,20.8538,0.2439,20.8538,0.2439,0.1303,4311.7,121.6
+garden,vizinha,3,3,20.741,0.1867,20.741,0.1867,0.1017,4036.6,38.0

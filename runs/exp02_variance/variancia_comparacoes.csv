@@ -1,0 +1,13 @@
+scene,config_a,config_b,psnr_a,psnr_b,delta_psnr,ruido_combinado,distinguivel,delta_vram_mb
+bonsai,base_json,candidata,28.6114,27.68173,0.9297,0.3238,True,235.0
+bonsai,base_json,padrao_artigo,28.6114,28.71357,-0.1022,0.2203,False,-53.8
+bonsai,base_json,vizinha,28.6114,27.69553,0.9159,0.3109,True,182.9
+bonsai,candidata,padrao_artigo,27.68173,28.71357,-1.0318,0.1491,True,-288.7
+bonsai,candidata,vizinha,27.68173,27.69553,-0.0138,0.2397,False,-52.1
+bonsai,padrao_artigo,vizinha,28.71357,27.69553,1.018,0.1362,True,236.7
+garden,base_json,candidata,20.38187,20.38543,-0.0036,1.9564,False,265.1
+garden,base_json,padrao_artigo,20.38187,20.85383,-0.472,2.1242,False,4.6
+garden,base_json,vizinha,20.38187,20.741,-0.3591,2.067,False,279.7
+garden,candidata,padrao_artigo,20.38543,20.85383,-0.4684,0.32,True,-260.5
+garden,candidata,vizinha,20.38543,20.741,-0.3556,0.2628,True,14.6
+garden,padrao_artigo,vizinha,20.85383,20.741,0.1128,0.4306,False,275.1
