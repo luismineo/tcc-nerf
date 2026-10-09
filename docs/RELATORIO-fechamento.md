@@ -116,8 +116,9 @@ penalizadas: a pesada ganhou o mesmo que a leve.
 
 **Decisão:** o grid do `bonsai` a 5000 iterações permanece válido. Etapa 2b
 dispensada. O truncamento entra como limitação declarada: valores absolutos de
-PSNR do `bonsai` subestimados em ~1 dB em relação a 20 000 iterações (e ~1,6 dB
-em relação a 30 000), ordenação e fronteira preservadas.
+PSNR do `bonsai` subestimados em ~1 dB em relação a 20 000 iterações (e ~1,5 dB
+em relação a 30 000: +1,07 medidos até 20 000 mais +0,38 da curva entre 20 000 e
+30 000), ordenação e fronteira preservadas.
 
 ### Observação sobre VRAM
 
@@ -258,3 +259,34 @@ somados.
 grid, a VRAM varia ~1,3 GB em `garden` e ~2,1 GB em `bonsai`. Mas em `garden` a
 faixa mensuravelmente útil vai de 4040 a 4845 MB, ~0,8 GB, por 0,56 dB de
 ganho. É esse número, e não a amplitude bruta, que o texto deve usar.
+
+---
+
+## Etapa 5 — Revisão do artigo
+
+**Saída:** `docs/ARTIGO-v2-propostas.md`
+
+O artigo existe no repositório apenas como PDF, então a revisão foi entregue
+como texto pronto para transcrever, não como edição da fonte. Contém:
+
+- **correções pontuais** (A): onze itens de valor ou afirmação, terminologia de
+  "fator", título, grafia;
+- **referências** (B): seis obras citadas e ausentes da lista, duas listadas e
+  não citadas, ano inconsistente do Mip-NeRF 360 e resto de modelo na entrada
+  de Zhang et al.;
+- **texto revisado** (C): Resumo, dois trechos da Introdução, Seção 2
+  reorganizada (divisão treino/teste → `aabb_scale` → resolução) com a Tabela 1
+  corrigida, Seção 3 com placeholders preenchidos e os parágrafos de
+  `per_level_scale`, `nerf_compatibility`, iterações e ruído, e as Seções 4, 5
+  e Limitações, novas;
+- **figuras e tabelas** (D): numeração proposta, caminho de cada arquivo e
+  separação entre essenciais e opcionais.
+
+Duas afirmações da v1 foram identificadas como **atribuições sem suporte** e
+reescritas: o limiar de −2 dB "considerado aceitável na literatura", que nenhum
+dos trabalhos citados define, e a configuração padrão "fixada por Müller et al.",
+que difere do `base.json` efetivamente usado.
+
+Pendências que só o autor resolve, marcadas **[verificar]** no texto: modelo de
+CPU e quantidade de RAM (o modelo citado não existe e a série usa DDR5), e os
+dados bibliográficos completos das referências acrescentadas.
