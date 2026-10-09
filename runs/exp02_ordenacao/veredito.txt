@@ -1,0 +1,5 @@
+inversoes=0
+distancia_leve_pesada_5000=3.0189
+distancia_leve_pesada_20000=3.0272
+crescimento=0.0083 (limite 0.5)
+veredito=PRESERVADA

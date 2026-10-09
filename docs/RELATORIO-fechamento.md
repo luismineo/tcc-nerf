@@ -82,3 +82,53 @@ cada ponto, todas dentro de 0,23 dB.
    genuinamente baixa** — ~14,7 dB, confirmada três vezes. Se a Etapa 3 vier a
    rodar, a demonstração "o padrão não cabe, a leve cabe" seria feita contra uma
    configuração de qualidade ruim, o que enfraquece o argumento.
+
+---
+
+## Etapa 2 — Teste de ordenação do `bonsai` a 20 000 iterações
+
+**Script:** `scripts/teste_ordenacao.py`
+**Saídas:** `runs/exp02_ordenacao/` (`ordenacao.csv`, `ordenacao.png`,
+`veredito.txt`)
+
+Quatro configurações cobrindo a faixa de capacidade, uma execução cada a 20 000
+iterações. Referência a 5000: média de 3 repetições onde disponível
+(`exp02_variance`), valor do grid nas demais.
+
+| config | T F L | PSNR 5000 | origem | PSNR 20 000 | ganho | VRAM 20k |
+|---|---|---|---|---|---|---|
+| leve | 17 2 8 | 26,503 | grid n=1 | 27,503 | +1,000 | 3069,9 |
+| candidata | 19 2 8 | 27,682 | média n=3 | 28,803 | +1,122 | 3180,6 |
+| `base_json` | 19 4 8 | 28,611 | média n=3 | 29,681 | +1,069 | 3442,6 |
+| pesada | 19 8 16 | 29,522 | grid n=1 | 30,530 | +1,008 | 5054,6 |
+
+### Veredito: **ORDEM PRESERVADA**
+
+| critério | resultado | limite |
+|---|---|---|
+| inversões entre pares separados por mais que o ruído | **0** | 0 |
+| crescimento da distância leve → pesada | **+0,008 dB** (3,019 → 3,027) | 0,5 dB |
+
+Os ganhos variam entre si apenas 0,12 dB (1,000 a 1,122), abaixo do ruído de
+referência. **O truncamento em 5000 iterações é um deslocamento uniforme de
+~1,05 dB, não uma distorção.** Configurações de alta capacidade não foram
+penalizadas: a pesada ganhou o mesmo que a leve.
+
+**Decisão:** o grid do `bonsai` a 5000 iterações permanece válido. Etapa 2b
+dispensada. O truncamento entra como limitação declarada: valores absolutos de
+PSNR do `bonsai` subestimados em ~1 dB em relação a 20 000 iterações (e ~1,6 dB
+em relação a 30 000), ordenação e fronteira preservadas.
+
+### Observação sobre VRAM
+
+O pico de VRAM a 20 000 iterações ficou entre +16 e +165 MB acima do medido a
+5000, dentro da faixa de variação observada entre execuções idênticas (até
+122 MB). Confirma que execuções curtas capturam o pico de alocação, premissa já
+validada anteriormente.
+
+### Argumento para o texto
+
+O número de iterações deixa de ser uma escolha a defender e passa a ser uma
+escolha **testada**: a 5000 iterações, `garden` está a menos que o ruído do seu
+valor final, e `bonsai` está ~1 dB abaixo, mas com a ordenação entre
+configurações — que é o que uma Fronteira de Pareto afirma — intacta.
