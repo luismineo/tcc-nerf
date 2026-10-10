@@ -65,12 +65,25 @@ cena a cena. (EE §4.1)
 Bônus: manter 5000 preserva a comparabilidade com o exp01.
 
 **Qual é a "configuração padrão"?** O `base.json` distribuído com a
-implementação: `T` = 19, `F` = 4, `L` = 8. O artigo original lista `T` = 19,
-`F` = 2, `L` = 16 — são pontos diferentes, e os dois foram medidos. Adotou-se o
-`base.json` por ser o que um usuário executa. (RV §1.1)
+implementação: `T` = 19, `F` = 4, `L` = 8. O artigo original recomenda `F` = 2 e
+`L` = 16, escolhidos por uma análise de Pareto entre tempo e erro (Müller et al.,
+Fig. 5), e deixa `T` para ajustar a cada tarefa (2^14 a 2^24). Até 23/02/2023, o
+`base.json` era `T19 F2 L16`; os próprios autores o mudaram para `F4 L8` "para
+desempenho e qualidade ligeiramente melhores" (commits `3612ea5` e `298ce96`).
+Os dois pontos foram medidos. Adotou-se o atual por ser o que um usuário
+executa. (RV §1.1; ARTIGO-v2-propostas §4)
+
+**E o resultado contradiz o artigo original?** Não exatamente — o critério é
+outro. Eles otimizaram tempo × erro numa cena sintética e numa GPU de 24 GB, com
+número de parâmetros constante. Aqui o custo é memória, em cena real. Sob esse
+critério, `T19 F2 L16` fica fora da fronteira em Garden e empata com o padrão
+atual em Bonsai, treinando 39 % mais devagar. E os próprios autores trocaram o
+padrão depois.
 
 **Por que derivar o `per_level_scale`?** O `base.json` não o define, e a
-implementação o calcula a partir do `aabb_scale`. Variar `L` com razão fixa
+implementação o calcula a partir do `aabb_scale`, para que o nível mais fino
+chegue a 2048 × o tamanho da cena, como os autores especificam para NeRF
+(Müller et al., Seção 4). Variar `L` com razão fixa
 mudaria ao mesmo tempo o número de níveis e a resolução mais fina, e todo o
 efeito seria atribuído a `L`. Fixando o mesmo alvo de resolução da
 implementação, `L` = 8 reproduz exatamente o baseline. (EE §4.6)
@@ -109,10 +122,19 @@ das operações paralelas em GPU sob controle máximo. Variar a semente somaria 
 variação de inicialização — é trabalho futuro, e tornaria o ruído *maior*, não
 menor.
 
-**Uma execução convergiu 1,8 dB abaixo. Isso não invalida tudo?** Foi detectada,
+**Uma das 24 execuções da validação de ruído (2 cenas × 4 configurações × 3
+repetições) convergiu 1,8 dB abaixo. Isso não invalida tudo?** Foi detectada,
 analisada e tratada por critério declarado (desvio maior que 3× a mediana das
 amplitudes). Nenhuma ocorrência semelhante foi encontrada nas 54 combinações do
 grid. O dado bruto está preservado. (RV §2.2–2.3)
+
+**De onde vem a tolerância de −2 dB?** É um critério próprio, fixado no
+pré-projeto. Nenhum dos artigos de referência define limiar de degradação
+aceitável (conferido em Mildenhall et al., Müller et al. e Gao et al.). É uma
+tolerância ampla: na ablação do NeRF, −2,24 dB é o custo de remover a
+codificação posicional. E nenhuma conclusão depende dela — ordenação, fronteira,
+patamares e sweet spot usam o ruído medido (0,244 dB). Ela só delimita a região
+de interesse (20 de 27 configurações em Garden, 15 de 27 em Bonsai).
 
 **Por que o limiar de suspeita é 0,47 dB?** Três vezes a mediana das
 amplitudes medidas (0,157 dB). Calculado sobre o conjunto, não por grupo, para

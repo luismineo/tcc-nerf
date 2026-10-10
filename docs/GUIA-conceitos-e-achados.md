@@ -63,9 +63,10 @@ da altura originais), a maior que cabia. Depois o número de iterações: 5000.
 centrais: as próprias imagens de treino ocupam 1,6 a 2,7 GB da placa, e os
 hiperparâmetros não mexem nisso.
 
-**As validações (13/09).** O mesmo treinamento repetido deu resultados até
-0,244 dB diferentes — o ruído do próprio Instant-NGP. Uma execução em 24 falhou
-silenciosamente, 1,81 dB abaixo das gêmeas. Bonsai mostrou convergir mais
+**As validações (13/09).** Quatro configurações por cena foram treinadas três
+vezes cada, com tudo igual — 24 execuções. O mesmo treinamento repetido deu
+resultados até 0,244 dB diferentes: o ruído do próprio Instant-NGP. Uma das 24
+falhou silenciosamente, 1,81 dB abaixo das gêmeas. Bonsai mostrou convergir mais
 devagar que Garden.
 
 **O fechamento (08–09/10).** Com critérios fixados antes de cada etapa: busca de
@@ -116,10 +117,18 @@ de 204 800 (`T15 F2 L4`) a 52,3 milhões (`T19 F8 L16`) — **cerca de 255 vezes
 Guarde esse número: a VRAM, no mesmo intervalo, varia só 1,3× em Garden.
 
 **Configuração padrão.** É o arquivo `base.json` distribuído com o Instant-NGP:
-**T19 F4 L8**. O artigo original do Instant-NGP apresenta outro padrão,
-T19 F2 L16. São pontos diferentes do grid; os dois foram medidos. O trabalho usa
-o `base.json` porque é o que um usuário executa. Na fronteira de Garden, aliás,
-T19 F2 L16 nem aparece.
+**T19 F4 L8**. A história tem três pedaços, e vale saber distinguir:
+
+- o **artigo** do Instant-NGP recomenda F = 2 e L = 16, escolhidos por uma
+  análise de Pareto entre tempo de treino e erro (Fig. 5 do artigo). T não é
+  fixado: varia de 2^14 a 2^24 e "precisa ser ajustado à tarefa". 2^19 aparece
+  como o tamanho a partir do qual a RTX 3090 fica mais lenta;
+- o **repositório** começou, em 2022, com `base.json` = T19 F2 L16;
+- em **23/02/2023**, os autores mudaram o `base.json` para T19 F4 L8, "para
+  desempenho e qualidade ligeiramente melhores".
+
+Os dois pontos estão no grid e foram medidos. O trabalho usa o atual porque é o
+que um usuário executa. Na fronteira de Garden, aliás, T19 F2 L16 nem aparece.
 
 **`per_level_scale` (b).** A razão entre a resolução de um nível e a do
 anterior. Com b = 2, cada nível tem o dobro da resolução do anterior. O
@@ -128,8 +137,9 @@ chegue a 2048 × `aabb_scale`. Se L mudasse mantendo b fixo, mudaria também a
 resolução mais fina, e o efeito seria atribuído a L sem ser só dele. Por isso o
 trabalho recalcula b para cada L com o mesmo alvo — e assim T19 F4 L8 reproduz
 exatamente o baseline. Efeito colateral: com L = 4, b vira 8 em Garden
-(resoluções 16, 128, 1024, 8192), saltos grandes entre níveis. É a hipótese para
-uma das não-monotonicidades (achado A12).
+(resoluções 16, 128, 1024, 8192), saltos grandes entre níveis — os autores do
+método usam b entre 1,26 e 2. É a hipótese para uma das não-monotonicidades
+(achado A12).
 
 ### 2.2 A cena e os dados
 
@@ -561,7 +571,8 @@ combinação (−1,0 dB).
 Garden, `T15 F2 L4` → `T15 F2 L8` perde ~1,5 dB, e `T19 F4 L4` → `T19 F8 L4`
 perde ~1,4 dB; os dois pontos de chegada foram medidos três vezes cada. Hipóteses (não verificadas): com
 T = 15, mais níveis finos saturam a tabela e multiplicam colisões; com L = 4, os
-saltos entre níveis são grandes (b = 8) e mais features não ajudam.
+saltos entre níveis são grandes (b = 8, quando os autores do método usam entre
+1,26 e 2) e mais features não ajudam.
 
 **A13 — Garden consome mais memória por ter mais pixels, não por ser mais
 complexa.** Imagens de Garden somam 1,7× os pixels das de Bonsai. Descontadas
@@ -599,6 +610,7 @@ scripts usam uma trava que impede execuções simultâneas.
 | guia em patamares | uma tabela com as 27 configurações | responde "com X MB, o que uso?" e esconde o que é ruído | 2.7 |
 | sweet spot = joelho + empate + mais rápido | só o joelho; escolha subjetiva | reprodutível e honesto com o ruído | 2.7 |
 | manter 0,244 dB após ver 0,34 dB | trocar o limiar | mudar critério depois de ver o dado é o que o pré-registro proíbe; a sensibilidade foi reportada | 2.6 |
+| manter −2 dB como critério próprio | atribuir à literatura; retirar | fixado no pré-projeto, antes dos dados; nenhum artigo de referência o define; não sustenta nenhuma conclusão, só uma contagem | 5 |
 | fronteira 2D com tempo na área | fronteira 3D | a 3D é ilegível (já visto no exp01) | 2.7 |
 | gráfico de bolhas empilhado, legenda única | lado a lado | em página retrato cada cena ganha a largura toda | — |
 
@@ -620,7 +632,9 @@ mas era o `aabb_scale` errado que o tornava dominante (EE §5).
 | "reduzir T, F ou L reduz proporcionalmente a VRAM" | parâmetros variam 255×, VRAM 1,3–1,7× | "reduz o número de parâmetros, mas não proporcionalmente a VRAM" |
 | "a folhagem de Garden consome mais VRAM" | descontadas as imagens, Garden consome menos | "Garden consome mais porque suas imagens têm mais pixels" |
 | "5000 iterações convergem" | Bonsai fica ~1 dB abaixo de 20 000 | "5000 iterações são um orçamento padronizado; a ordenação foi verificada" |
-| "−2 dB é o limiar aceitável da literatura" | nenhum trabalho citado define isso | "tolerância de −2 dB adotada neste trabalho" |
+| "−2 dB é o limiar aceitável da literatura" | conferido: nenhum dos três artigos de referência define limiar; na ablação do NeRF, −2,24 dB é o custo de tirar a codificação posicional | "tolerância de −2 dB fixada no pré-projeto como critério próprio" |
+| "Müller et al. fixam T = 19, F = 2, L = 16" | o artigo fixa só F = 2 e L = 16; T19 F2 L16 era o `base.json` do repositório até 2023 | "o artigo recomenda F = 2 e L = 16; o repositório usava T19 F2 L16 até fevereiro de 2023" |
+| "o Instant-NGP é 60× mais rápido que o NeRF original" | 20–60× é hash × frequências na mesma implementação | "~5 min contra 1–2 dias; a codificação hash, sozinha, responde por 20–60×" |
 | "alocações dinâmicas da amostragem formam o piso" | essa parcela não foi decomposta | "custo fixo de execução, parcialmente ligado à extensão da cena" |
 | "`T19 F2 L8` perde 0,15 dB" | está dentro do ruído | "qualidade equivalente, dentro do ruído" |
 | "o grid tem uma medição por ponto, então não é confiável" | o ruído foi medido e os suspeitos, verificados | "o ruído é ~27× menor que a amplitude do grid; suspeitos reverificados por critério declarado" |

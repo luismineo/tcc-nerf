@@ -12,6 +12,11 @@ Como usar:
 4. as **seções 4 e 5** cobrem referências, figuras e tabelas.
 
 Trechos marcados **[verificar]** dependem de informação que só o autor tem.
+As afirmações atribuídas a Mildenhall et al., Müller et al. e Gao et al. foram
+conferidas nos PDFs de `docs/refs/` (NeRF: arXiv v2; Instant-NGP: ACM TOG,
+2022; Gao et al.: revisão atualizada pós-Gaussian Splatting); as páginas citadas
+são as desses arquivos. O histórico do `base.json` foi conferido no repositório
+`vendor/instant-ngp` (commit usado: `abe236e`, 02/02/2026).
 Todos os números vêm de `runs/` e dos relatórios em `docs/`
 (`RELATORIO-fechamento.md`, `RELATORIO-exp02-validacoes.md`,
 `runs/exp02_final/tabelas.md`). Os conceitos usados aqui (joelho, sweet spot,
@@ -47,18 +52,21 @@ ruído, patamares, piso) estão explicados em `GUIA-conceitos-e-achados.md`.
 | 2 | p. 8, antes da Tabela 1 | "por um número reduzido de iterações, suficiente apenas para que o pico de alocação fosse atingido" — a calibração final usou 5000 iterações e mediu também o PSNR. | 3.3 |
 | 3 | Seção 3, p. 11, e fim da 3.2, p. 13–14 | "limite superior de qualidade" — o baseline não é limite superior: 2 configurações em Garden e 4 em Bonsai o superam por mais que o ruído (até +0,46 dB e +0,90 dB). | 3.4 |
 | 4 | 3.3, p. 14 | "reduções em qualquer um dos três implicam redução **proporcional** no consumo de VRAM" — contradiz o próprio Resumo da v1.1 ("não é proporcional") e os dados: os parâmetros da codificação variam ~255×, a VRAM 1,3× em Garden e 1,7× em Bonsai. | 3.4 |
-| 5 | 3.3, p. 14 | "Müller et al. fixam L = 16, T = 19 e F = 2 … vértice superior do espaço de busca … baseline" — três erros: o `base.json` usado é **T = 19, F = 4, L = 8**; esse ponto é interior, não vértice; e `T19 F2 L16` também não é o vértice (o vértice é `T19 F8 L16`). | 3.4 |
+| 5 | 3.3, p. 14 | "Müller et al. fixam L = 16, T = 19 e F = 2 … vértice superior do espaço de busca … baseline" — quatro erros: (a) o artigo fixa só **F = 2 e L = 16**; T não é fixado — a Tabela 1 dá 2^14 a 2^24 e diz que T "precisa ser ajustado à tarefa" (p. 4); 2^19 aparece como o tamanho a partir do qual o desempenho cai na RTX 3090 (p. 5–6, Fig. 4). `T19 F2 L16` era o `base.json` **do repositório** até 23/02/2023; (b) o `base.json` usado é **T = 19, F = 4, L = 8**; (c) esse ponto é interior, não vértice; (d) `T19 F2 L16` também não é o vértice (o vértice é `T19 F8 L16`). | 3.4 |
 | 6 | 3.3, p. 15 | "esperava-se que uma parcela das combinações pudesse exceder os 6 GB … mapeamento das combinações inviáveis" — nenhuma excedeu (54 de 54 mais os baselines). | 3.4 |
 | 7 | 3.2, p. 12–13, e Figura 4 | A Figura 4 é de **Bonsai**, mas o texto não diz. A frase "continua apresentando ganhos após 5000 … estabilização a partir de 10 000" vale só para Bonsai; Garden estabiliza em 4000. Falta o argumento mais forte: o teste de ordenação a 20 000 iterações. | 3.4 |
 | 8 | 3.2, p. 12 | "o marco de 20 000 passos … ponto de parada metodologicamente defensável" — logo antes de adotar 5000. O fato (decaimento da taxa de aprendizado em 20 000) é útil; o enquadramento contradiz a escolha. | 3.4 |
 | 9 | 2.1, p. 10 | "curiosamente, contradiz a recomendação inicial dos autores" — a recomendação é **começar alto e reduzir**. O resultado a **confirma**. | 3.3 |
 | 10 | 2.1 | Só Garden é justificado. Bonsai aparece com `aabb_scale` = 8 na 3.2 sem evidência no texto. | 3.3 (figura nova) |
-| 11 | 3.5, p. 17 | "limiar de −2 dB considerado aceitável na literatura (Mildenhall et al., 2021; Müller et al., 2022)" — nenhum dos dois trabalhos define esse limiar. | 3.4 |
+| 11 | 3.5, p. 17 | "limiar de −2 dB considerado aceitável na literatura (Mildenhall et al., 2021; Müller et al., 2022)" — **conferido nos três artigos de referência: nenhum define limiar ou tolerância de degradação**, nem 2 dB nem outro valor. Na ablação do NeRF, 2 dB é uma perda grande: −2,24 dB é o que custa remover a codificação posicional. | 3.4 |
 | 12 | 3.5, p. 17 | Promete, na Seção 4, a "comparação entre os regimes de cena limitada e não-limitada quanto à magnitude dos efeitos de cada hiperparâmetro". Esse número não existia — **agora existe** (`efeito_hiperparametros.csv`). | 3.5 (Seção 4.6) |
 | 13 | Seção 2, p. 6 | "folhagem de alta frequência … acarreta maior consumo de VRAM" — os dados mostram outra coisa: Garden consome mais porque suas imagens têm mais pixels. Descontadas as imagens, Garden consome **menos** que Bonsai (1641 contra 1800 MB). | 3.3 |
 | 14 | Resumo e Abstract | "alocações dinâmicas do processo de amostragem" — sustentado só em parte. O que foi medido é o custo das imagens; o restante do piso não foi decomposto. Há evidência indireta (o `aabb_scale` sozinho move ~500 MB em Garden), mas não medição direta. | 3.1 |
 | 15 | Seção 2, p. 6 | "demonstraram que o Instant-NGP já se demonstra otimizado, para datasets pequenos" — o exp01 mostrou ausência de pressão de memória, não que o modelo seja "otimizado". | 3.3 |
 | 16 | 3.4 | O sweet spot é citado como objetivo, mas nunca definido de forma operacional. Sem definição, a escolha parece arbitrária. | 3.4 |
+| 17 | Introdução, p. 4 | "uma aceleração de até sessenta vezes sobre o NeRF original" — no Instant-NGP, 20–60× é o ganho da codificação hash sobre a codificação de frequências **na mesma implementação** dos autores (Tabela 2 e p. 10). Contra o NeRF original, a diferença é bem maior: ~5 min contra 100 a 300 mil iterações, 1 a 2 dias numa V100 (Mildenhall et al., p. 9). | 3.2 |
+| 18 | Introdução, p. 4 | Plenoxels, DVGO, TensoRF e **K-Planes** "com resultados superiores a 31 dB … (Gao et al., 2026)" — a Tabela 1 de Gao et al. confirma os três primeiros (31,71; 31,95–32,80; 31,56–33,14 dB, treino de 8 a 25 min), mas não traz K-Planes. | 3.2 |
+| 19 | Seção 2, p. 6 | Mip-NeRF 360 "considerado padrão ouro na literatura (Gao et al., 2026)" — Gao et al. não usam a expressão; descrevem o conjunto como "benchmark desafiador" para cenas não-limitadas (p. 6). | 3.3 |
 
 ### 2.2 Coerência de método — recomendado
 
@@ -153,7 +161,24 @@ depois de "não é proporcional ao tamanho da estrutura hash":
 
 ### 3.2 Introdução
 
-Só a redação da p. 5 (tabela 2.3). O conteúdo está alinhado com os resultados.
+Além da redação (tabela 2.3), duas atribuições a ajustar.
+
+**p. 4 — substituir** "O Instant-NGP (Müller et al., 2022) representa o estado da
+arte entre esses modelos, no quesito de velocidade, alcançando 33,18 dB em
+aproximadamente cinco minutos, uma aceleração de até sessenta vezes sobre o NeRF
+original." **por:**
+
+> O Instant-NGP (Müller et al., 2022) representa o estado da arte entre esses
+> modelos no quesito velocidade, alcançando 33,18 dB em aproximadamente cinco
+> minutos de treinamento, enquanto o NeRF original exige de 100 a 300 mil
+> iterações, cerca de um a dois dias em uma GPU NVIDIA V100 (Mildenhall et al.,
+> 2021). Os próprios autores atribuem à codificação hash, isoladamente, uma
+> aceleração de 20 a 60 vezes em relação à codificação de frequências na mesma
+> implementação (Müller et al., 2022).
+
+**p. 3–4 — K-Planes.** Duas opções: tirar K-Planes da frase que atribui os
+">31 dB" a Gao et al., mantendo-o só na lista de modelos; ou citar o próprio
+artigo do K-Planes (Fridovich-Keil et al., 2023, já na lista) para o número dele.
 
 ### 3.3 Seção 2 — Preliminares e definição do cenário
 
@@ -174,8 +199,11 @@ também, amplamente utilizado e considerado padrão ouro na literatura (Gao et a
 > optou-se pela cena Garden, do conjunto Mip-NeRF 360 (Barron et al., 2022),
 > amplamente utilizado como referência na literatura (Gao et al., 2026).
 
-**[verificar]** se Gao et al. usam de fato a expressão "padrão ouro"; se sim, ela
-pode voltar.
+Conferido: Gao et al. não usam "padrão ouro". Se quiser manter a ideia, a
+formulação deles é que o Mip-NeRF 360 "serve como um benchmark desafiador para
+avaliar métodos capazes de lidar com cenas não-limitadas de grande escala"
+(p. 6) — por exemplo: "…amplamente utilizado como referência para a avaliação de
+métodos em cenas não-limitadas (Gao et al., 2026)".
 
 **p. 6 — substituir** "A cena Garden, especificamente, apresenta geometria
 complexa e folhagem de alta frequência, o que dificulta a inferência do modelo e
@@ -291,10 +319,15 @@ possível economizar e qual o custo disso em fidelidade visual." **por:**
 **3.2 — depois de** "…sem qualquer alteração nos hiperparâmetros de codificação de
 hash (Müller et al., 2022)", **acrescentar:**
 
-> Cabe registrar que esse arquivo define T = 19, F = 4 e L = 8, e não os valores
-> apresentados como padrão no artigo original (T = 19, F = 2, L = 16). Adotou-se o
-> arquivo distribuído por ser a configuração que um usuário efetivamente executa;
-> as duas configurações pertencem ao espaço de busca e foram medidas.
+> Cabe registrar que esse arquivo define T = 19, F = 4 e L = 8. O artigo
+> original recomenda F = 2 e L = 16 como padrão, a partir de uma análise de
+> Pareto entre tempo de treinamento e erro, e trata T como parâmetro a ajustar a
+> cada tarefa (Müller et al., 2022). Até fevereiro de 2023, o arquivo
+> distribuído usava T = 19, F = 2 e L = 16; os autores o alteraram para os
+> valores atuais com a justificativa de obter desempenho e qualidade ligeiramente
+> melhores (NVLABS, 2023). Adotou-se o arquivo atual por ser a configuração que
+> um usuário efetivamente executa; as duas configurações pertencem ao espaço de
+> busca e foram medidas.
 
 **3.2 — `nerf_compatibility`, acrescentar ao final do parágrafo:**
 
@@ -359,9 +392,11 @@ VRAM." **por:**
 
 > …proporcional a L · 2^T · F (Müller et al., 2022). No espaço de busca adotado,
 > esse número varia cerca de 255 vezes, de 204 800 a 52,3 milhões de
-> parâmetros. A redução de qualquer um dos três diminui o número de parâmetros,
-> mas não proporcionalmente o consumo de VRAM, já que parte relevante desse
-> consumo independe da codificação (Seção 4.5).
+> parâmetros. Müller et al. (2022) observam que a memória ocupada pela
+> codificação cresce linearmente com T. A codificação, porém, é apenas uma parte
+> do pico de VRAM: a redução de qualquer um dos três hiperparâmetros diminui o
+> número de parâmetros, mas não proporcionalmente o consumo total, já que parte
+> relevante dele independe da codificação (Seção 4.5).
 
 **3.3 — substituir** "Müller et al. (2022) fixam L = 16, T = 19 e F = 2 como
 configuração padrão, valores que correspondem exatamente ao vértice superior do
@@ -369,12 +404,14 @@ espaço de busca aqui adotado e, consequentemente, ao baseline descrito na Seç�
 3.2." **por:**
 
 > O baseline (T = 19, F = 4, L = 8) é um ponto interior desse espaço, que contém
-> configurações de maior e de menor capacidade; a configuração apresentada como
-> padrão no artigo original (T = 19, F = 2, L = 16) também pertence a ele.
+> configurações de maior e de menor capacidade; a configuração padrão anterior do
+> repositório (T = 19, F = 2, L = 16), que segue a recomendação do artigo
+> original, também pertence a ele.
 >
 > O arquivo de configuração não define a razão de crescimento da resolução entre
 > níveis (`per_level_scale`); a implementação a deriva do `aabb_scale`, de modo
-> que o nível mais fino alcance 2048 · `aabb_scale` em relação ao cubo unitário.
+> que o nível mais fino alcance 2048 vezes o tamanho da cena, como especificado
+> pelos autores para NeRF (Müller et al., 2022).
 > Para que variar L não alterasse ao mesmo tempo a resolução do nível mais fino —
 > o que atribuiria a L um efeito que também é de resolução —, a razão foi
 > calculada para cada configuração com esse mesmo alvo. Com isso, a configuração
@@ -393,7 +430,9 @@ execuções resultou em falha…" **por:**
 > idênticas). Três violações foram encontradas, envolvendo duas configurações de
 > Garden; cada uma foi reexecutada duas vezes e reproduziu o resultado original
 > dentro do ruído, o que caracteriza comportamento do modelo, e não falha de
-> execução.
+> execução. Duas das violações ocorrem entre configurações com L = 4, em que a razão
+> entre níveis derivada chega a 8,0 em Garden, muito acima da faixa de 1,26 a 2
+> empregada pelos autores do método (Müller et al., 2022).
 
 **3.4 — acrescentar ao final:**
 
@@ -432,11 +471,27 @@ baseline…", **acrescentar:**
 > uma configuração foi medida mais de uma vez — baselines, validação do ruído,
 > reexecuções da triagem —, usa-se a média de todas as medições.
 
-**3.5 — substituir** "…dentro do limiar de −2 dB considerado aceitável na
-literatura (Mildenhall et al., 2021; Müller et al., 2022)" **por:**
+**3.5 — substituir** "…cuja degradação de qualidade permaneceu dentro do limiar
+de −2 dB considerado aceitável na literatura (Mildenhall et al., 2021; Müller et
+al., 2022)." **por:**
 
-> …dentro de uma tolerância de −2 dB, adotada neste trabalho como limite de
-> degradação aceitável.
+> …cuja perda de PSNR em relação ao baseline não excedeu 2 dB. Essa tolerância
+> foi fixada no início do trabalho como critério próprio, e não como limiar
+> estabelecido na literatura. Trata-se de uma tolerância ampla: 2 dB
+> correspondem a um erro quadrático médio cerca de 58 % maior, e, no estudo de
+> ablação do NeRF original, uma perda média dessa ordem (2,24 dB) acompanha a
+> remoção da codificação posicional, uma das contribuições centrais do método
+> (Mildenhall et al., 2021). Ela é usada apenas para delimitar a região de
+> interesse; a ordenação entre configurações segue o limiar de ruído medido.
+
+Conferido nos três artigos: nenhum define limiar de degradação aceitável. Os
+números da ablação estão na Tabela 2 e na Seção 6.4 da versão arXiv
+(`docs/refs/2003.08934v2.pdf`, p. 13–14). O artigo cita a versão da
+*Communications of the ACM*; **[verificar]** se a tabela de ablação também está
+nela — se não estiver, cite a versão da ECCV 2020 nesse trecho.
+
+**Alternativa:** tirar os −2 dB do artigo. Nenhuma conclusão depende deles — só
+a contagem descritiva da Seção 4.4 (20 de 27 em Garden, 15 de 27 em Bonsai).
 
 ### 3.5 Seção 4 — Análise dos resultados (nova)
 
@@ -445,9 +500,10 @@ literatura (Mildenhall et al., 2021; Müller et al., 2022)" **por:**
 > Repetidas sob condições idênticas, as execuções variaram entre 0,023 e
 > 0,244 dB de PSNR, com mediana de 0,157 dB. A variação decorre do
 > não-determinismo das operações paralelas em GPU, e não da semente aleatória,
-> mantida fixa. Uma execução em 24, contudo, convergiu para uma solução 1,81 dB
-> inferior às demais da mesma configuração, com PSNR, SSIM e LPIPS concordando e
-> sem qualquer sinal de erro. Esse comportamento, distinto do ruído, motivou a
+> mantida fixa. Uma das 24 execuções dessa validação (duas cenas, quatro
+> configurações, três repetições cada), contudo, convergiu para uma solução
+> 1,81 dB inferior às demais da mesma configuração, com PSNR, SSIM e LPIPS
+> concordando e sem qualquer sinal de erro. Esse comportamento, distinto do ruído, motivou a
 > triagem de monotonicidade aplicada à grade (Seção 3.3), que não encontrou
 > ocorrência semelhante nas 54 combinações.
 >
@@ -498,6 +554,16 @@ literatura (Mildenhall et al., 2021; Müller et al., 2022)" **por:**
 > −16 % de tempo. Em Bonsai, nenhuma configuração equivalente ao padrão é
 > mensuravelmente mais barata: a configuração padrão já está na fronteira
 > eficiente.
+>
+> Vale notar que os próprios autores do método escolheram F = 2 e L = 16 por uma
+> análise de Pareto — entre tempo de treinamento e erro, com número de
+> parâmetros aproximadamente constante, em uma cena sintética e numa GPU de
+> 24 GB (Müller et al., 2022, Fig. 5). Sob o critério de memória e em cena real,
+> o resultado muda: em Garden, `T19 F2 L16` fica fora da fronteira — `T17 F4 L8`
+> entrega qualidade equivalente (20,91 contra 20,81 dB) com 196 MB a menos; em
+> Bonsai, é o
+> joelho, mas empata com a configuração padrão atual, que treina em 39 % menos
+> tempo.
 >
 > **4.4 Guia por orçamento de memória**
 >
@@ -648,7 +714,11 @@ do baseline e tempo).
 - MILDENHALL, Ben et al. Local light field fusion: practical view synthesis with
   prescriptive sampling guidelines. ACM Transactions on Graphics, v. 38, n. 4,
   2019.
-- NVLABS. instant-ngp. GitHub, 2025. **[verificar URL e data de acesso]**
+- NVLABS. instant-ngp. GitHub. Disponível em:
+  https://github.com/NVlabs/instant-ngp. Acesso em: **[data]**. Para a mudança
+  do `base.json`, citar os commits `3612ea5` e `298ce96`, de 23 fev. 2023 ("Update
+  default NeRF config (`base.json`) to give slightly better performance &
+  quality"). Os experimentos usaram o commit `abe236e` (02 fev. 2026).
 
 **Nova, se o critério do joelho for citado (3.4):**
 
@@ -669,6 +739,26 @@ citar onde couber.
 - ZHANG et al. (2018) termina com resto do modelo: "Edição. Cidade: Editora, Ano
   de Publicação." — apagar.
 - Mip-NeRF 360: usar "Barron et al., 2022" em todo o texto.
+- MILDENHALL et al., *Communications of the ACM*, v. 65, n. 1: esse número da
+  revista é de janeiro de 2022, e a lista diz 2021. **[verificar]** o ano na
+  página da revista.
+
+**Conferido nos PDFs de `docs/refs/`:**
+
+| afirmação do artigo | resultado |
+|---|---|
+| limiar de −2 dB "aceitável na literatura" | **não sustentada** — nenhum dos três define limiar |
+| Müller et al. "fixam" T = 19, F = 2, L = 16 | **parcial** — fixam F = 2 e L = 16; T varia de 2^14 a 2^24 |
+| Instant-NGP: 33,18 dB em ~5 min | **confirmada** — Müller, Tabela 2 (33,176); Gao, Tabela 1 |
+| "aceleração de até sessenta vezes sobre o NeRF original" | **atribuição errada** — 20–60× é hash × frequências na mesma implementação |
+| RTX 3090 nos experimentos originais | **confirmada** — Müller, p. 6 |
+| decaimento da taxa de aprendizado em 20 000 iterações | **confirmada** — Müller, p. 10: fator 0,33 em 20 mil e a cada 10 mil seguintes; Fig. 4 associa os saltos na convergência a esse decaimento |
+| Plenoxels, DVGO, TensoRF > 31 dB em minutos | **confirmada** — Gao, Tabela 1 |
+| K-Planes > 31 dB (Gao) | **não está** na Tabela 1 de Gao |
+| 3DGS exige mais VRAM e armazenamento | **confirmada** — Gao, Tabela 2 ("Memory Usage": NeRF médio, 3DGS alto) e Seção 6.1 |
+| Mip-NeRF 360 "padrão ouro" (Gao) | **expressão não usada** — "benchmark desafiador" |
+| divisão 1 a cada 8 imagens | **confirmada também no NeRF** — "hold out 1/8 of these for the test set" (p. 10); pode ser citado junto do LLFF |
+| `per_level_scale` com nível mais fino em 2048 × tamanho da cena | **confirmada** — Müller, Seção 4 (p. 6) |
 
 **[verificar]** os dados completos de cada entrada acrescentada — servem para
 localizar a obra, não para copiar sem conferência.
