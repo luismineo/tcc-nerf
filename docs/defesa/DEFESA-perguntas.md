@@ -3,8 +3,11 @@
 Cada resposta traz o número que a sustenta e onde está a evidência. A ideia é
 nunca responder "porque é boa prática": responder com o dado.
 
-Fontes: `RELATORIO-fechamento.md` (RF), `RELATORIO-exp02-validacoes.md` (RV),
-`ESTADO-exp02.md` (EE), `runs/exp02_final/tabelas.md` (TF).
+Fontes: [RELATORIO-fechamento.md](../relatorios/RELATORIO-fechamento.md) (RF),
+[RELATORIO-exp02-validacoes.md](../relatorios/RELATORIO-exp02-validacoes.md) (RV),
+[ESTADO-exp02.md](../relatorios/ESTADO-exp02.md) (EE),
+[tabelas.md](../../runs/exp02_final/tabelas.md) (TF). Conceitos em
+[GUIA-conceitos-e-achados.md](GUIA-conceitos-e-achados.md).
 
 ---
 

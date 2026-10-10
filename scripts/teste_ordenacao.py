@@ -6,7 +6,7 @@ A curva de convergencia do bonsai mostrou ~1,6 dB ainda disponiveis entre 5000 e
 aqui e outra: a ORDEM entre configuracoes se mantem? Configuracoes de maior
 capacidade convergem mais devagar e podem ter sido penalizadas pelo truncamento.
 
-Criterio, fixado antes de rodar (docs/PLANO-fechamento.md, Etapa 2):
+Criterio, fixado antes de rodar (docs/metodo/PLANO-fechamento.md, Etapa 2):
 
   ordem PRESERVADA se
     (1) nenhum par separado por mais que o ruido (0,244 dB) a 5000 iteracoes

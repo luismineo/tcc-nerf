@@ -6,7 +6,7 @@ convergencia em 1 de 24 execucoes (uma execucao terminou 1,8 dB abaixo das
 gemeas, com status=ok e nenhum aviso). Extrapolando, ~2 dos 54 pontos podem
 estar contaminados, e o results.csv nao os distingue.
 
-Criterio, fixado antes de olhar os dados (docs/PLANO-fechamento.md):
+Criterio, fixado antes de olhar os dados (docs/metodo/PLANO-fechamento.md):
 aumentar T, F ou L mantendo os outros dois fixos nao deveria REDUZIR o PSNR em
 mais de 0,47 dB -- 3x a mediana das amplitudes medidas entre execucoes
 identicas. Cada violacao gera um suspeito: o ponto de MENOR PSNR do par, porque

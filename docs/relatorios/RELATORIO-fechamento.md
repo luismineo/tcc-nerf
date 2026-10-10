@@ -264,7 +264,7 @@ ganho. É esse número, e não a amplitude bruta, que o texto deve usar.
 
 ## Etapa 5 — Revisão do artigo
 
-**Saída:** `docs/ARTIGO-v2-propostas.md`
+**Saída:** `docs/artigo/ARTIGO-v2-propostas.md`
 
 O artigo existe no repositório apenas como PDF, então a revisão foi entregue
 como texto pronto para transcrever, não como edição da fonte. Contém:

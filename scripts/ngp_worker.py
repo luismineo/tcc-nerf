@@ -649,7 +649,8 @@ def main():
 
         # n_rays_per_batch nao tem binding em pyngp nesta build: o campo fica
         # explicitamente nulo em vez de zero, para nao poluir medias nem sugerir
-        # que foi medido. Ver README, secao "Suposicoes e limitacoes".
+        # que foi medido. Ver docs/metodo/PIPELINE.md, secao "Limitacoes e
+        # ressalvas".
         metrics.setdefault("n_rays_effective_mean", None)
         metrics.setdefault("samples_per_batch_mean", None)
 

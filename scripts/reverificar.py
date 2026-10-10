@@ -4,7 +4,7 @@
 Reaproveita variancia.uma_execucao (mesmo worker, mesmo protocolo, mesma
 amostragem de linha de base), para que a reexecucao seja comparavel ao grid.
 
-Regra de decisao, fixada antes de rodar (docs/PLANO-fechamento.md, Etapa 1):
+Regra de decisao, fixada antes de rodar (docs/metodo/PLANO-fechamento.md, Etapa 1):
 
   - reexecucoes concordam entre si (amplitude <= ruido de referencia, 0,244 dB)
     E a media difere do valor do grid em mais de 0,47 dB

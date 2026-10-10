@@ -9,12 +9,12 @@ importa:
 
 | sigla | documento |
 |---|---|
-| EE | `ESTADO-exp02.md` — migração para o Mip-NeRF 360, defeitos encontrados |
-| RV | `RELATORIO-exp02-validacoes.md` — ruído, convergência do Bonsai |
-| RF | `RELATORIO-fechamento.md` — triagem, teste de ordenação, guia |
-| TF | `runs/exp02_final/tabelas.md` — tabelas finais |
-| AP | `ARTIGO-v2-propostas.md` — texto proposto para o artigo |
-| DP | `DEFESA-perguntas.md` — perguntas prováveis da banca |
+| EE | [ESTADO-exp02.md](../relatorios/ESTADO-exp02.md) — migração para o Mip-NeRF 360, defeitos encontrados |
+| RV | [RELATORIO-exp02-validacoes.md](../relatorios/RELATORIO-exp02-validacoes.md) — ruído, convergência do Bonsai |
+| RF | [RELATORIO-fechamento.md](../relatorios/RELATORIO-fechamento.md) — triagem, teste de ordenação, guia |
+| TF | [tabelas.md](../../runs/exp02_final/tabelas.md) — tabelas finais |
+| AP | [ARTIGO-v2-propostas.md](../artigo/ARTIGO-v2-propostas.md) — texto proposto para o artigo |
+| DP | [DEFESA-perguntas.md](DEFESA-perguntas.md) — perguntas prováveis da banca |
 
 Roteiro:
 
@@ -155,7 +155,7 @@ qualidade ficar boa — foi o que se fez (achado A2). O `aabb_scale` também mex
 memória (~500 MB em Garden entre 2 e 32) e em quantos raios o treino processa por
 iteração: com 4, Garden usa ~21 700 raios por iteração; com 8, ~7900 (EE §5).
 
-![Calibração do aabb_scale](../runs/exp02_final/aabb_calibracao.png)
+![Calibração do aabb_scale](../../runs/exp02_final/aabb_calibracao.png)
 
 **Fator de redução (resolução).** O Mip-NeRF 360 vem em quatro tamanhos:
 original e reduzido por 2, 4 e 8 em cada dimensão. Fator 2 significa metade da
@@ -312,7 +312,7 @@ a média de todas as medições de cada configuração; `n` diz quantas foram. O
 padrão tem n = 5 em Garden e n = 6 em Bonsai.
 
 **Critério fixado antes (pré-registro).** Cada etapa do fechamento teve o
-critério de decisão escrito antes de rodar (`PLANO-fechamento.md`). Isso impede
+critério de decisão escrito antes de rodar (`docs/metodo/PLANO-fechamento.md`). Isso impede
 interpretar o resultado na direção que convém. Dois exemplos em que o critério
 pesou contra a conveniência: o teste de viabilidade não rodou porque a ocupação
 estava em 545 MB, acima dos 400 MB fixados — embora provavelmente funcionasse;
@@ -332,7 +332,7 @@ limiar. Refeita com limiares de 0,15 a 0,50 dB, a análise mostra que os sweet
 spots e o guia de Bonsai não mudam; o guia de Garden muda a partir de 0,29 dB
 (`sensibilidade_ruido.csv`).
 
-![Sensibilidade ao limiar de ruído](../runs/exp02_final/sensibilidade_ruido.png)
+![Sensibilidade ao limiar de ruído](../../runs/exp02_final/sensibilidade_ruido.png)
 
 ### 2.7 Análise multiobjetivo
 
@@ -431,7 +431,7 @@ Traduzindo: `T19 F2 L8` entrega **91 % de toda a qualidade possível gastando
 Em Bonsai, a curva é mais gradual e o joelho é `T19 F2 L16`: 73 % do ganho com
 23 % da memória extra (distância 0,35).
 
-![Como o joelho é encontrado](../runs/exp02_final/joelho_explicado.png)
+![Como o joelho é encontrado](../../runs/exp02_final/joelho_explicado.png)
 
 Na figura, a linha laranja é a distância do joelho até a reta; as cinzas são as
 dos outros pontos. A caixa laranja-clara em volta do joelho é o ruído medido,
@@ -475,7 +475,7 @@ spot: empata com o joelho e treina em 150 s contra 246 s.
 
 #### Como ler o gráfico de bolhas
 
-![Fronteira de Pareto com o tempo na área da bolha](../runs/exp02_final/pareto_bolhas.png)
+![Fronteira de Pareto com o tempo na área da bolha](../../runs/exp02_final/pareto_bolhas.png)
 
 - cada bolha é uma configuração; eixo x é memória, eixo y é qualidade;
 - **área** da bolha proporcional ao tempo de treino (área, e não diâmetro: com
@@ -492,7 +492,7 @@ hiperparâmetro do menor ao maior valor, mantidos os outros dois, e faz-se a
 média sobre as 9 combinações dos outros dois. O traço vertical no gráfico mostra
 o menor e o maior efeito entre essas 9.
 
-![Efeito de cada hiperparâmetro](../runs/exp02_final/efeito_hiperparametros.png)
+![Efeito de cada hiperparâmetro](../../runs/exp02_final/efeito_hiperparametros.png)
 
 Quando o traço é longo, há **interação**: o efeito de um hiperparâmetro depende
 do valor dos outros. É o caso em quase tudo aqui — por isso o guia recomenda

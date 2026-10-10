@@ -17,10 +17,13 @@ conferidas nos PDFs de `docs/refs/` (NeRF: arXiv v2; Instant-NGP: ACM TOG,
 2022; Gao et al.: revisão atualizada pós-Gaussian Splatting); as páginas citadas
 são as desses arquivos. O histórico do `base.json` foi conferido no repositório
 `vendor/instant-ngp` (commit usado: `abe236e`, 02/02/2026).
-Todos os números vêm de `runs/` e dos relatórios em `docs/`
-(`RELATORIO-fechamento.md`, `RELATORIO-exp02-validacoes.md`,
-`runs/exp02_final/tabelas.md`). Os conceitos usados aqui (joelho, sweet spot,
-ruído, patamares, piso) estão explicados em `GUIA-conceitos-e-achados.md`.
+Todos os números vêm de `runs/` e dos relatórios em `docs/relatorios/`
+([RELATORIO-fechamento.md](../relatorios/RELATORIO-fechamento.md),
+[RELATORIO-exp02-validacoes.md](../relatorios/RELATORIO-exp02-validacoes.md),
+[tabelas.md](../../runs/exp02_final/tabelas.md)). Os conceitos usados aqui
+(joelho, sweet spot, ruído, patamares, piso) estão explicados em
+[GUIA-conceitos-e-achados.md](../defesa/GUIA-conceitos-e-achados.md). O PDF da
+v1.1 está ao lado deste arquivo, em `TCC-Artigo-v1.1.pdf`.
 
 ---
 

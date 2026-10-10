@@ -1,6 +1,6 @@
 # Revisão do artigo v1 — alinhamento com os dados medidos
 
-Confronta `docs/TCC Artigo - InstantNGP.pdf` (19 p.) com o que foi medido até
+Confronta `docs/artigo/TCC-Artigo-v1.pdf` (19 p.) com o que foi medido até
 2026-09-13. Cobre inconsistências de valor, onde entram as figuras novas e que
 ajustes de texto a nova direção exige. **Não trata da Seção 4 (resultados)**, que
 fica para a entrega seguinte.

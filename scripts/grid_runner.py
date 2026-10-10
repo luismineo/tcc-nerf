@@ -116,7 +116,8 @@ def grid_n_max(aabb_scale):
 # Motivo metodologico: B nao e hiperparametro do modelo. Reduzir B com o numero
 # de iteracoes fixo nao produz um modelo menor, produz o MESMO modelo treinado
 # com menos amostras — a queda de PSNR seria efeito de orcamento de treino, nao
-# de capacidade. Ver README, secao "Por que o terceiro eixo e n_levels".
+# de capacidade. Ver docs/metodo/PIPELINE.md, secao "Por que o terceiro eixo e
+# n_levels".
 FIXED_BATCH_SIZE = 262144   # default do instant-ngp (1<<18)
 
 # Varredura separada de B, numa configuracao mediana de Lego, reportada a parte
@@ -153,7 +154,7 @@ SCENES = {"garden": "garden", "bonsai": "bonsai"}
 # Fator de reducao calibrado por cena (Etapa 1). Define QUAL transforms e usado:
 # transforms_f<N>_train.json / _test.json, gerados pelo split_holdout.py.
 #
-# Ambas calibradas na Etapa 1 (ver docs/RELATORIO-etapa1-calibracao.md):
+# Ambas calibradas na Etapa 1 (ver docs/relatorios/RELATORIO-etapa1-calibracao.md):
 #   garden  f2 2594x1681, aabb_scale=4, split 161/24
 #   bonsai  f2 1559x1039, aabb_scale=8, split 255/37
 # O aabb_scale otimo DIFERE entre as cenas, entao o per_level_scale derivado
@@ -305,7 +306,7 @@ def collect_manifest(args, base_cfg, runs):
             "O terceiro eixo e n_levels (L), nao training_batch_size. B nao e "
             "hiperparametro do modelo: com o numero de iteracoes fixo, reduzir B "
             "treina o MESMO modelo com menos amostras, confundindo orcamento de "
-            "treino com capacidade. Ver README."
+            "treino com capacidade. Ver docs/metodo/PIPELINE.md."
         ),
         "per_level_scale_rule": {
             "formula": "b = (2048 * aabb_scale / N_min) ** (1 / (L - 1))",

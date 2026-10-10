@@ -10,6 +10,10 @@ data/
 # e 2.7 GB com o build. E dependencia externa, nao conteudo deste repo.
 vendor/
 
+# Artigos de referencia (PDFs de terceiros), usados para conferir citacoes.
+# Quais sao e em que versao fica registrado em docs/refs/README.md.
+docs/refs/*.pdf
+
 # ===========================================================================
 # runs/ : resultados versionados SELETIVAMENTE
 #
